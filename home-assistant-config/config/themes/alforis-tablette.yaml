@@ -1,0 +1,9 @@
+alforis-tablette:
+  # Palette cosy-féminine
+  primary-color: "#E39F70"
+  accent-color: "#9D3A66"
+  primary-text-color: "#2E3A48"
+  secondary-background-color: "#F5F5F5"
+  ha-card-background-color: "#FFFFFF"
+  ha-card-border-radius: "20px"
+  ha-card-box-shadow: "0 4px 12px rgba(0,0,0,0.1)"

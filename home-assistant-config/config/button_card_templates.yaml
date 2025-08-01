@@ -1,0 +1,39 @@
+nav-button:
+  aspect_ratio: 1/1
+  size: 100%
+  show_state: false
+  show_name: true
+  styles:
+    card:
+      - background: rgba(227,159,112,0.9)
+      - color: white
+      - border-radius: 16px
+      - padding: 8px
+    icon:
+      - width: 32px
+      - height: 32px
+    name:
+      - font-size: 13px
+      - font-weight: 500
+  state:
+    - value: hover
+      styles:
+        card:
+          - transform: scale(1.05)
+
+control-card:
+  aspect_ratio: 1/1
+  size: 100%
+  show_state: true
+  show_name: true
+  styles:
+    card:
+      - background: rgba(245,245,245,0.8)
+      - border-radius: 20px
+      - padding: 12px
+    icon:
+      - width: 36px
+      - height: 36px
+    name:
+      - font-size: 14px
+      - color: var(--primary-text-color)
