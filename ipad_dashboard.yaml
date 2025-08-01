@@ -57,7 +57,7 @@ views:
     icon: mdi:devices
     cards:
       - type: entities
-        title: Tous les appareils
+         title: Tous les appareils
         entities:
           - sensor.temperature_terrasse
           - switch.volet_chambre
