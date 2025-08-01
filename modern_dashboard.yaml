@@ -50,6 +50,11 @@ button_card_templates:
           border-color: rgba(var(--rgb-primary-color), 0.4);
         }
       }
+      @media (max-width: 768px) {
+        #card { padding: 12px; }
+        #name { font-size: 14px; }
+        #icon { width: 24px; height: 24px; }
+      }
 
   # Template for navigation buttons (like in the home page grids)
   nav-button:
@@ -76,7 +81,11 @@ button_card_templates:
       name:
         - font-size: 14px
         - font-weight: 500
-    extra_styles: '' # Override hover effect from base
+    extra_styles: |
+      @media (max-width: 992px) {
+        #name { display: none; }
+        #icon { margin-bottom: 0; }
+      }
     state:
       - operator: template
         value: '[[[ return window.location.pathname.endsWith(variables.path) ]]]'
@@ -128,6 +137,11 @@ button_card_templates:
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
+      @media (max-width: 768px) {
+        h2 {
+          font-size: 22px;
+        }
+      }
 
   # Template for room navigation buttons
   room-button:
@@ -176,6 +190,18 @@ anchors:
           box-shadow: var(--ha-card-box-shadow);
           border: var(--ha-card-border-width) solid var(--ha-card-border-color);
         }
+        @media (max-width: 768px) {
+          ha-card {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: auto !important;
+            border-radius: 0 !important;
+            border-top: 1px solid var(--ha-card-border-color) !important;
+            margin: 0 !important;
+          }
+        }
     card:
       type: horizontal-stack
       cards:
@@ -207,9 +233,10 @@ anchors:
     padding: var(--modern-dashboard-grid-gap)
     columns: 4
     mediaquery:
+      '(min-width: 1800px)': { columns: 5 }
       '(max-width: 1200px)': { columns: 3 }
-      '(max-width: 900px)': { columns: 2 }
-      '(max-width: 600px)': { columns: 1 }
+      '(max-width: 992px)': { columns: 2 }
+      '(max-width: 768px)': { columns: 1 }
 
 #-------------------------------------------------------------------------------------------------#
 # Views
@@ -271,29 +298,56 @@ views:
           - type: vertical-stack
             cards:
               - { type: markdown, content: "### 🏠 Navigation par pièce" }
-              - { type: grid, columns: 1, cards: [
-                  { template: nav-button, name: 🏠 Rez-de-chaussée, icon: mdi:home-floor-0, tap_action: { action: navigate, navigation_path: /lovelace/rdc } },
-                  { template: nav-button, name: 🏠 1er étage, icon: mdi:home-floor-1, tap_action: { action: navigate, navigation_path: /lovelace/etage1 } },
-                  { template: nav-button, name: 🏠 2e étage, icon: mdi:home-floor-2, tap_action: { action: navigate, navigation_path: /lovelace/etage2 } }
-                ]}
+              - type: grid
+                columns: 2
+                cards:
+                  - { template: nav-button, name: 🏠 Rez-de-chaussée, icon: mdi:home-floor-0, tap_action: { action: navigate, navigation_path: /lovelace/rdc } }
+                  - { template: nav-button, name: 🏠 1er étage, icon: mdi:home-floor-1, tap_action: { action: navigate, navigation_path: /lovelace/etage1 } }
+                  - { template: nav-button, name: 🏠 2e étage, icon: mdi:home-floor-2, tap_action: { action: navigate, navigation_path: /lovelace/etage2 } }
+                card_mod:
+                  style:
+                    .: |
+                      @media (max-width: 768px) {
+                        :host {
+                          grid-template-columns: 1fr !important;
+                        }
+                      }
       - type: vertical-stack
         cards:
           - { type: markdown, content: "### 🧰 Navigation par matériel" }
-          - { type: grid, columns: 1, cards: [
-              { template: nav-button, name: 🪟 Volets roulants, icon: mdi:window-shutter, tap_action: { action: navigate, navigation_path: /lovelace/volets } },
-              { template: nav-button, name: ❄️ Airzone, icon: mdi:air-filter, tap_action: { action: navigate, navigation_path: /lovelace/clim } },
-              { template: nav-button, name: 💡 Éclairage, icon: mdi:lightbulb-group, tap_action: { action: navigate, navigation_path: /lovelace/lumieres } },
-              { template: nav-button, name: 🔌 Prises & Interrupteurs, icon: mdi:power-socket-eu, tap_action: { action: navigate, navigation_path: /lovelace/prises } }
-            ]}
+          - type: grid
+            columns: 2
+            cards:
+              - { template: nav-button, name: 🪟 Volets roulants, icon: mdi:window-shutter, tap_action: { action: navigate, navigation_path: /lovelace/volets } }
+              - { template: nav-button, name: ❄️ Airzone, icon: mdi:air-filter, tap_action: { action: navigate, navigation_path: /lovelace/clim } }
+              - { template: nav-button, name: 💡 Éclairage, icon: mdi:lightbulb-group, tap_action: { action: navigate, navigation_path: /lovelace/lumieres } }
+              - { template: nav-button, name: 🔌 Prises & Interrupteurs, icon: mdi:power-socket-eu, tap_action: { action: navigate, navigation_path: /lovelace/prises } }
+            card_mod:
+              style:
+                .: |
+                  @media (max-width: 768px) {
+                    :host {
+                      grid-template-columns: 1fr !important;
+                    }
+                  }
       - type: vertical-stack
         cards:
           - { type: markdown, content: "### 🎬 Scénarios rapides" }
-          - { type: grid, columns: 2, cards: [
-              { template: scenario-button, name: 🌅 Réveil, icon: mdi:weather-sunny, tap_action: { action: call-service, service: script.scenario_reveil } },
-              { template: scenario-button, name: 🌙 Coucher, icon: mdi:weather-night, tap_action: { action: call-service, service: script.scenario_coucher } },
-              { template: scenario-button, name: 🏠 Absent, icon: mdi:home-export-outline, tap_action: { action: call-service, service: script.scenario_absent } },
-              { template: scenario-button, name: 🎉 Fête, icon: mdi:party-popper, tap_action: { action: call-service, service: script.scenario_fete } }
-            ]}
+          - type: grid
+            columns: 2
+            cards:
+              - { template: scenario-button, name: 🌅 Réveil, icon: mdi:weather-sunny, tap_action: { action: call-service, service: script.scenario_reveil } }
+              - { template: scenario-button, name: 🌙 Coucher, icon: mdi:weather-night, tap_action: { action: call-service, service: script.scenario_coucher } }
+              - { template: scenario-button, name: 🏠 Absent, icon: mdi:home-export-outline, tap_action: { action: call-service, service: script.scenario_absent } }
+              - { template: scenario-button, name: 🎉 Fête, icon: mdi:party-popper, tap_action: { action: call-service, service: script.scenario_fete } }
+            card_mod:
+              style:
+                .: |
+                  @media (max-width: 768px) {
+                    :host {
+                      grid-template-columns: 1fr !important;
+                    }
+                  }
 
   #-----------------------------------#
   # Pièces (Rooms) View
