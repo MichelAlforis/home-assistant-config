@@ -50,6 +50,12 @@ button_card_templates:
           border-color: rgba(var(--rgb-primary-color), 0.4);
         }
       }
+      @media (max-width: 1024px) {
+        #card {
+          backdrop-filter: none;
+          background-color: rgba(var(--rgb-card-background-color), 0.95);
+        }
+      }
       @media (max-width: 768px) {
         #card { padding: 12px; }
         #name { font-size: 14px; }
@@ -181,7 +187,7 @@ anchors:
           position: sticky;
           top: 16px;
           z-index: 10;
-          background: rgba(var(--rgb-card-background-color), 0.95);
+          background: rgba(var(--rgb-card-background-color), 0.85);
           backdrop-filter: blur(20px);
           padding: 8px;
           margin: 0 calc(-1 * var(--modern-dashboard-grid-gap));
@@ -189,6 +195,12 @@ anchors:
           border-radius: var(--ha-card-border-radius);
           box-shadow: var(--ha-card-box-shadow);
           border: var(--ha-card-border-width) solid var(--ha-card-border-color);
+        }
+        @media (max-width: 1024px) {
+          ha-card {
+            backdrop-filter: none;
+            background: rgba(var(--rgb-card-background-color), 0.95);
+          }
         }
         @media (max-width: 768px) {
           ha-card {
@@ -237,6 +249,14 @@ anchors:
       '(max-width: 1200px)': { columns: 3 }
       '(max-width: 992px)': { columns: 2 }
       '(max-width: 768px)': { columns: 1 }
+    card_mod:
+      style:
+        .: |
+          @media (max-width: 768px) {
+            #root {
+              padding-bottom: 70px !important;
+            }
+          }
 
 #-------------------------------------------------------------------------------------------------#
 # Views
@@ -288,66 +308,75 @@ views:
                 show_forecast: true
                 forecast_type: hourly
                 card_mod:
-                  style: { ha-card: { border-radius: var(--ha-card-border-radius), backdrop-filter: blur(20px), background: linear-gradient(135deg, rgba(66, 165, 245, 0.2), rgba(33, 150, 243, 0.1)), border: 2px solid rgba(66, 165, 245, 0.3), padding: var(--modern-dashboard-card-padding), box-shadow: var(--ha-card-box-shadow) } }
+                  style: |
+                    ha-card {
+                      border-radius: var(--ha-card-border-radius);
+                      backdrop-filter: blur(20px);
+                      background: linear-gradient(135deg, rgba(66, 165, 245, 0.2), rgba(33, 150, 243, 0.1));
+                      border: 2px solid rgba(66, 165, 245, 0.3);
+                      padding: var(--modern-dashboard-card-padding);
+                      box-shadow: var(--ha-card-box-shadow);
+                    }
+                    @media (max-width: 1024px) {
+                      ha-card {
+                        backdrop-filter: none;
+                        background: linear-gradient(135deg, rgba(66, 165, 245, 0.8), rgba(33, 150, 243, 0.7));
+                      }
+                    }
               - type: entities
                 title: 🌡️ Climat intérieur
                 show_header_toggle: false
                 entities: [climate.rdc, sensor.temp_salon, sensor.temp_chambre, sensor.humidity_salon]
                 card_mod:
-                  style: { ha-card: { padding: var(--modern-dashboard-card-padding), border-radius: var(--ha-card-border-radius), box-shadow: var(--ha-card-box-shadow), border-width: 0, backdrop-filter: blur(20px) } }
+                  style:
+                    .: |
+                      ha-card {
+                        padding: var(--modern-dashboard-card-padding);
+                        border-radius: var(--ha-card-border-radius);
+                        box-shadow: var(--ha-card-box-shadow);
+                        border-width: 0;
+                        backdrop-filter: blur(20px);
+                      }
+                    "@media (max-width: 1024px)": |
+                      ha-card {
+                        backdrop-filter: none;
+                        background-color: rgba(var(--rgb-card-background-color), 0.95);
+                      }
           - type: vertical-stack
             cards:
               - { type: markdown, content: "### 🏠 Navigation par pièce" }
-              - type: grid
+              - type: custom:grid-layout
                 columns: 2
+                mediaquery:
+                  '(max-width: 768px)': { columns: 1 }
                 cards:
                   - { template: nav-button, name: 🏠 Rez-de-chaussée, icon: mdi:home-floor-0, tap_action: { action: navigate, navigation_path: /lovelace/rdc } }
                   - { template: nav-button, name: 🏠 1er étage, icon: mdi:home-floor-1, tap_action: { action: navigate, navigation_path: /lovelace/etage1 } }
                   - { template: nav-button, name: 🏠 2e étage, icon: mdi:home-floor-2, tap_action: { action: navigate, navigation_path: /lovelace/etage2 } }
-                card_mod:
-                  style:
-                    .: |
-                      @media (max-width: 768px) {
-                        :host {
-                          grid-template-columns: 1fr !important;
-                        }
-                      }
       - type: vertical-stack
         cards:
           - { type: markdown, content: "### 🧰 Navigation par matériel" }
-          - type: grid
+          - type: custom:grid-layout
             columns: 2
+            mediaquery:
+              '(max-width: 768px)': { columns: 1 }
             cards:
               - { template: nav-button, name: 🪟 Volets roulants, icon: mdi:window-shutter, tap_action: { action: navigate, navigation_path: /lovelace/volets } }
               - { template: nav-button, name: ❄️ Airzone, icon: mdi:air-filter, tap_action: { action: navigate, navigation_path: /lovelace/clim } }
               - { template: nav-button, name: 💡 Éclairage, icon: mdi:lightbulb-group, tap_action: { action: navigate, navigation_path: /lovelace/lumieres } }
               - { template: nav-button, name: 🔌 Prises & Interrupteurs, icon: mdi:power-socket-eu, tap_action: { action: navigate, navigation_path: /lovelace/prises } }
-            card_mod:
-              style:
-                .: |
-                  @media (max-width: 768px) {
-                    :host {
-                      grid-template-columns: 1fr !important;
-                    }
-                  }
       - type: vertical-stack
         cards:
           - { type: markdown, content: "### 🎬 Scénarios rapides" }
-          - type: grid
+          - type: custom:grid-layout
             columns: 2
+            mediaquery:
+              '(max-width: 768px)': { columns: 1 }
             cards:
               - { template: scenario-button, name: 🌅 Réveil, icon: mdi:weather-sunny, tap_action: { action: call-service, service: script.scenario_reveil } }
               - { template: scenario-button, name: 🌙 Coucher, icon: mdi:weather-night, tap_action: { action: call-service, service: script.scenario_coucher } }
               - { template: scenario-button, name: 🏠 Absent, icon: mdi:home-export-outline, tap_action: { action: call-service, service: script.scenario_absent } }
               - { template: scenario-button, name: 🎉 Fête, icon: mdi:party-popper, tap_action: { action: call-service, service: script.scenario_fete } }
-            card_mod:
-              style:
-                .: |
-                  @media (max-width: 768px) {
-                    :host {
-                      grid-template-columns: 1fr !important;
-                    }
-                  }
 
   #-----------------------------------#
   # Pièces (Rooms) View
@@ -388,7 +417,20 @@ views:
             name: Température Terrasse
             graph: line
             card_mod:
-              style: { ha-card: { padding: var(--modern-dashboard-card-padding), border-radius: var(--ha-card-border-radius), box-shadow: var(--ha-card-box-shadow), border-width: 0, backdrop-filter: blur(20px) } }
+              style: |
+                ha-card {
+                  padding: var(--modern-dashboard-card-padding);
+                  border-radius: var(--ha-card-border-radius);
+                  box-shadow: var(--ha-card-box-shadow);
+                  border-width: 0;
+                  backdrop-filter: blur(20px);
+                }
+                @media (max-width: 1024px) {
+                  ha-card {
+                    backdrop-filter: none;
+                    background-color: rgba(var(--rgb-card-background-color), 0.95);
+                  }
+                }
 
   #-----------------------------------#
   # Scénarios (Scenes) View
