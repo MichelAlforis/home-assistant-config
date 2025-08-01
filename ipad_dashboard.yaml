@@ -2,38 +2,53 @@ title: iPad
 views:
   - path: accueil
     title: Accueil
-    icon: mdi:tablet
+    icon: mdi:tablet-dashboard
     cards:
       - type: markdown
         content: >
-          # Bonjour {{ user }}  
-          Ajoutez votre texte ici, les modèles sont pris en charge ✨
-      - type: weather-forecast
-        entity: weather.forecast_maison
-        show_current: true
-        show_forecast: true
+          # Bonjour {{ user }}
+          ## Nous sommes le {{ now().strftime('%A %d %B') }}.
+
+      - type: horizontal-stack
+        cards:
+          - type: weather-forecast
+            entity: weather.forecast_maison
+            show_current: true
+            show_forecast: false
+          - type: entities
+            title: Accès Rapide
+            show_header_toggle: false
+            entities:
+              - light.salondejardin
+              - switch.volet_chambre
+              - scene.apero_terrasse
+
       - type: entities
         title: Infos système
+        show_header_toggle: false
         entities:
           - sensor.backup_backup_manager_state
+          - entity: sun.sun
+            name: Soleil
 
   - path: pieces
     title: Pièces
     icon: mdi:floor-plan
     cards:
       - type: entities
-        title: Salon
+        title: Contrôles par pièce
+        show_header_toggle: false
         entities:
+          - type: section
+            label: Salon
           - light.salondejardin
           - climate.sejour
-      - type: entities
-        title: Cuisine
-        entities:
+          - type: section
+            label: Cuisine
           - light.plafonnier_cuisine
           - sensor.temperature_cuisine
-      - type: entities
-        title: Chambre
-        entities:
+          - type: section
+            label: Chambre
           - light.lampe_chevet
           - climate.chambre
 
@@ -42,7 +57,7 @@ views:
     icon: mdi:devices
     cards:
       - type: entities
-        title: Liste du Matériel
+        title: Tous les appareils
         entities:
           - sensor.temperature_terrasse
           - switch.volet_chambre
@@ -53,7 +68,7 @@ views:
     icon: mdi:script-text-outline
     cards:
       - type: entities
-        title: Scénarios
+        title: Scénarios et Automatisations
         entities:
           - scene.apero_terrasse
           - automation.fermeture_volets_nuit
