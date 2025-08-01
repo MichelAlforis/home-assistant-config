@@ -1,0 +1,59 @@
+title: iPad
+views:
+  - path: accueil
+    title: Accueil
+    icon: mdi:tablet
+    cards:
+      - type: markdown
+        content: >
+          # Bonjour {{ user }}  
+          Ajoutez votre texte ici, les modèles sont pris en charge ✨
+      - type: weather-forecast
+        entity: weather.forecast_maison
+        show_current: true
+        show_forecast: true
+      - type: entities
+        title: Infos système
+        entities:
+          - sensor.backup_backup_manager_state
+
+  - path: pieces
+    title: Pièces
+    icon: mdi:floor-plan
+    cards:
+      - type: entities
+        title: Salon
+        entities:
+          - light.salondejardin
+          - climate.sejour
+      - type: entities
+        title: Cuisine
+        entities:
+          - light.plafonnier_cuisine
+          - sensor.temperature_cuisine
+      - type: entities
+        title: Chambre
+        entities:
+          - light.lampe_chevet
+          - climate.chambre
+
+  - path: materiel
+    title: Matériel
+    icon: mdi:devices
+    cards:
+      - type: entities
+        title: Liste du Matériel
+        entities:
+          - sensor.temperature_terrasse
+          - switch.volet_chambre
+          - switch.prise_salon
+
+  - path: scenarios
+    title: Scénarios
+    icon: mdi:script-text-outline
+    cards:
+      - type: entities
+        title: Scénarios
+        entities:
+          - scene.apero_terrasse
+          - automation.fermeture_volets_nuit
