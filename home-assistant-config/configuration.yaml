@@ -31,3 +31,19 @@ group:
       - light.salondejardin
       - climate.sejour
       - sensor.backup_backup_manager_state
+
+lovelace:
+  mode: storage
+  dashboards:
+    ipad-dashboard:
+      mode: yaml
+      title: iPad
+      icon: mdi:tablet-ipad
+      show_in_sidebar: true
+      filename: ipad_dashboard.yaml
+    modern-dashboard:
+      mode: yaml
+      title: Modern
+      icon: mdi:cellphone
+      show_in_sidebar: true
+      filename: modern_dashboard.yaml
