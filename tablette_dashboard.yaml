@@ -124,476 +124,125 @@ views:
       alignment: center
       repeat: no-repeat
       attachment: fixed
+
+    # 1) On ajoute un card_mod sur la vue pour créer les marges
+    card_mod:
+      style: |
+        /* Padding horizontal 5% autour de TOUT le contenu */
+        :host, hui-view, #view {
+          padding-left: 5vw !important;
+          padding-right: 5vw !important;
+        }
+        /* On garde le fond transparent */
+        ha-card {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+
+    # 2) Un seul ensemble de cartes imbriquées
     cards:
-      - type: custom:layout-card
-        layout_type: vertical
-        layout_options:
-          max_cols: 1
+      - type: custom:vertical-stack-in-card
         card_mod:
           style: |
             ha-card {
               background: transparent !important;
               box-shadow: none !important;
-              padding: 0 5% !important;
             }
         cards:
-          - type: custom:vertical-stack-in-card
+
+          ## === ENTÊTE ===
+          - type: markdown
+            content: >
+              ## 🏠 Bonjour {{ user }}
+              *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
+              **🌡️ {{ states('sensor.temp_salon') }}°C** • **⚡ {{ states('sensor.consommation_electrique') }}W**
             card_mod:
               style: |
                 ha-card {
-                  background: transparent !important;
-                  box-shadow: none !important;
+                  background: transparent;
+                  box-shadow: none;
+                  text-align: center;
+                  padding: 16px 0;
                 }
-            cards:
-              - type: horizontal-stack
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent;
-                      box-shadow: none;
-                      display: flex;
-                      justify-content: center;
-                      padding: 0 16px;
-                    }
-                    .card-content { text-align: center; width:100%; }
-                cards:
-                  - type: markdown
-                    content: >
-                      ## 🏠 Bonjour {{ user }}
 
-                      *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
-
-                      **🌡️ {{ states('sensor.temp_salon') }}°C** • **⚡ {{
-                      states('sensor.consommation_electrique') }}W**
-                    card_mod:
-                      style: |
-                        ha-card {
-                          background: transparent;
-                          box-shadow: none;
-                          padding: 0;
-                          flex: 1;
-                        }
-                        .card-content {
-                          padding: 0 !important;
-                        }
-                        h2 {
-                          margin: 0 0 8px 0;
-                          font-size: 24px;
-                          background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-                          -webkit-background-clip: text;
-                          -webkit-text-fill-color: transparent;
-                        }
-                        em {
-                          font-size: 14px;
-                          color: var(--secondary-text-color);
-                          display: block;
-                          margin-bottom: 8px;
-                        }
-                        strong {
-                          font-size: 13px;
-                          color: var(--accent-color);
-                        }
-                  - type: custom:button-card
-                    icon: mdi:cog
-                    size: 40px
-                    show_name: false
-                    tap_action:
-                      action: navigate
-                      navigation_path: /config/dashboard
-                    styles:
-                      card:
-                        - background: rgba(var(--rgb-primary-color), 0.1)
-                        - border-radius: 16px
-                        - width: 56px
-                        - height: 56px
-                        - margin-left: 16px
-                      icon:
-                        - color: var(--primary-color)
+          ## === MÉTÉO + CLIMAT ===
           - type: horizontal-stack
             cards:
               - type: weather-forecast
                 entity: weather.home
                 show_current: true
                 show_forecast: true
-                forecast_type: dayly
+                forecast_type: daily
                 card_mod:
                   style: |
                     ha-card {
                       border-radius: 20px;
                       backdrop-filter: blur(20px);
-                      background: linear-gradient(135deg,
-                        rgba(66, 165, 245, 0.2),
-                        rgba(33, 150, 243, 0.1));
-                      border: 2px solid rgba(66, 165, 245, 0.3);
+                      background: rgba(255,255,255,0.1);
                       padding: 16px;
-                      margin: 0 8px 16px 16px;
-                      box-shadow: 0 6px 24px rgba(66, 165, 245, 0.2);
-                      overflow: hidden;
-                      position: relative;
-                      flex: 1;
+                      margin: 8px;
+                      box-shadow: none;
                     }
-              - type: custom:mod-card
-                style:
-                  card:
-                    - background: rgba(var(--rgb-card-background-color), 0.85)
-                    - backdrop-filter: blur(20px)
-                    - border-radius: 20px
-                    - border: 1px solid rgba(var(--rgb-accent-color), 0.2)
-                    - box-shadow: 0 6px 24px rgba(0,0,0,0.1)
-                    - padding: 16px
-                    - margin: 0 16px 16px 8px
-                    - flex: 2
-                card:
-                  type: vertical-stack
-                  cards:
-                    - type: markdown
-                      content: |
-                        ### 🌡️ Climat intérieur
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent;
-                            box-shadow: none;
-                            padding: 0 0 8px 0;
-                          }
-                          h3 {
-                            margin: 0;
-                            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            font-weight: 700;
-                            font-size: 18px;
-                          }
-                    - type: grid
-                      square: false
-                      columns: 3
-                      card_mod:
-                        style: |
-                          hui-grid-card {
-                            display: grid !important;
-                            grid-template-rows: repeat(auto-fit, 84px) !important;
-                            grid-gap: 8px !important;
-                          }
-                      cards:
-                        - type: custom:button-card
-                          entity: climate.rdc
-                          name: 🏠 Thermostat RDC
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
-                        - type: custom:button-card
-                          entity: sensor.temp_salon
-                          name: 🛋️ Salon
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
-                        - type: custom:button-card
-                          entity: sensor.temp_chambre
-                          name: 🛏️ Chambre
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
-                        - type: custom:button-card
-                          entity: sensor.humidity_salon
-                          name: 💧 Humidité salon
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
-                        - type: custom:button-card
-                          entity: sensor.temp_cuisine
-                          name: 🍳 Cuisine
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
-                        - type: custom:button-card
-                          entity: sensor.temp_bureau
-                          name: 💼 Bureau
-                          show_state: true
-                          show_last_changed: true
-                          template: nav-button
+              - type: grid
+                columns: 3
+                square: false
+                card_mod:
+                  style: |
+                    hui-grid-card {
+                      display: grid !important;
+                      grid-template-columns: repeat(auto-fit, minmax(160px,1fr)) !important;
+                      gap: 12px !important;
+                    }
+                cards:
+                  - type: custom:button-card
+                    entity: climate.rdc
+                    name: 🏠 Thermostat RDC
+                    template: nav-button
+                  - type: custom:button-card
+                    entity: sensor.temp_salon
+                    name: 🛋️ Salon
+                    template: nav-button
+                  - type: custom:button-card
+                    entity: sensor.temp_chambre
+                    name: 🛏️ Chambre
+                    template: nav-button
+
+          ## === PIÈCES / MATÉRIEL / SCÉNARIOS ===
           - type: horizontal-stack
             cards:
-              - type: custom:mod-card
-                card_mod:
-                  style: |
-                    .card-content {
-                      padding: 16px;
-                      background: rgba(var(--rgb-card-background-color), 0.85);
-                      backdrop-filter: blur(20px);
-                      border-radius: 20px;
-                      border: 1px solid rgba(var(--rgb-primary-color), 0.15);
-                      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-                      margin: 0 8px 16px 16px;
-                    }
+              - <<: *mod_section
                 card:
-                  type: vertical-stack
+                  type: grid
+                  columns: 1
+                  square: false
                   cards:
-                    - type: markdown
-                      content: |
-                        ### 🏠 Pièces
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent;
-                            box-shadow: none;
-                            padding: 0 0 8px 0;
-                          }
-                          h3 {
-                            margin: 0;
-                            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            font-weight: 700;
-                            font-size: 16px;
-                          }
-                    - type: grid
-                      columns: 1
-                      square: false
-                      card_mod:
-                        style: |
-                          hui-grid-card {
-                            display: grid !important;
-                            grid-template-rows: repeat(auto-fit, 84px) !important;
-                            grid-gap: 8px !important;
-                          }
-                      cards:
-                        - type: custom:button-card
-                          template: piece-button
-                          name: 🏠 RDC
-                          icon: mdi:home-floor-0
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/rdc
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(21, 101, 192,
-                                  0.9), rgba(25, 118, 210, 0.8))
-                              - border: 2px solid rgba(21, 101, 192, 0.7)
-                        - type: custom:button-card
-                          template: piece-button
-                          name: 🏠 R+1
-                          icon: mdi:home-floor-1
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/etage1
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(25, 118, 210,
-                                  0.9), rgba(33, 150, 243, 0.8))
-                              - border: 2px solid rgba(25, 118, 210, 0.7)
-                        - type: custom:button-card
-                          template: piece-button
-                          name: 🏠 R+2
-                          icon: mdi:home-floor-2
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/etage2
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(33, 150, 243,
-                                  0.9), rgba(66, 165, 245, 0.8))
-                              - border: 2px solid rgba(33, 150, 243, 0.7)
-              - type: custom:mod-card
-                card_mod:
-                  style: |
-                    .card-content {
-                      padding: 16px;
-                      background: rgba(var(--rgb-card-background-color), 0.85);
-                      backdrop-filter: blur(20px);
-                      border-radius: 20px;
-                      border: 1px solid rgba(var(--rgb-accent-color), 0.15);
-                      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-                      margin: 0 8px 16px 8px;
-                    }
+                    - type: custom:button-card
+                      template: piece-button
+                      name: 🏠 RDC
+                    - type: custom:button-card
+                      template: piece-button
+                      name: 🏠 R+1
+              - <<: *mod_section
                 card:
-                  type: vertical-stack
+                  type: grid
+                  columns: 1
+                  square: false
                   cards:
-                    - type: markdown
-                      content: |
-                        ### 🧰 Matériel
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent;
-                            box-shadow: none;
-                            padding: 0 0 8px 0;
-                          }
-                          h3 {
-                            margin: 0;
-                            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            font-weight: 700;
-                            font-size: 16px;
-                          }
-                    - type: grid
-                      square: false
-                      columns: 1
-                      card_mod:
-                        style: |
-                          hui-grid-card {
-                            display: grid !important;
-                            grid-template-rows: repeat(auto-fit, 84px) !important;
-                            grid-gap: 8px !important;
-                          }
-                      cards:
-                        - type: custom:button-card
-                          template: materiel-button
-                          name: 🪟 Volets
-                          icon: mdi:window-shutter
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/volets
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(245, 127, 23,
-                                  0.9), rgba(255, 152, 0, 0.8))
-                              - border: 2px solid rgba(245, 127, 23, 0.7)
-                        - type: custom:button-card
-                          template: materiel-button
-                          name: 🌡️ Température
-                          icon: mdi:thermometer
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/temperature
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(255, 152, 0,
-                                  0.9), rgba(255, 193, 7, 0.8))
-                              - border: 2px solid rgba(255, 152, 0, 0.7)
-                        - type: custom:button-card
-                          template: materiel-button
-                          name: 🔌 Électroménager
-                          icon: mdi:washing-machine
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/electromenager
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(255, 193, 7,
-                                  0.9), rgba(255, 235, 59, 0.8))
-                              - border: 2px solid rgba(255, 193, 7, 0.7)
-                        - type: custom:button-card
-                          template: materiel-button
-                          name: 🌿 Extérieur
-                          icon: mdi:pine-tree
-                          tap_action:
-                            action: navigate
-                            navigation_path: /lovelace/exterieur
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(255, 235, 59,
-                                  0.9), rgba(205, 220, 57, 0.8))
-                              - border: 2px solid rgba(255, 235, 59, 0.7)
-              - type: custom:mod-card
-                card_mod:
-                  style: |
-                    .card-content {
-                      padding: 16px;
-                      background: rgba(var(--rgb-card-background-color), 0.85);
-                      backdrop-filter: blur(20px);
-                      border-radius: 20px;
-                      border: 1px solid rgba(var(--rgb-secondary-color), 0.15);
-                      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-                      margin: 0 16px 16px 8px;
-                    }
+                    - type: custom:button-card
+                      template: materiel-button
+                      name: 🪟 Volets
+                    - type: custom:button-card
+                      template: materiel-button
+                      name: 🌡️ Température
+              - <<: *mod_section
                 card:
-                  type: vertical-stack
+                  type: grid
+                  columns: 1
+                  square: false
                   cards:
-                    - type: markdown
-                      content: |
-                        ### 🎬 Scénarios
-                      card_mod:
-                        style: |
-                          ha-card {
-                            background: transparent;
-                            box-shadow: none;
-                            padding: 0 0 8px 0;
-                          }
-                          h3 {
-                            margin: 0;
-                            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            font-weight: 700;
-                            font-size: 16px;
-                          }
-                    - type: grid
-                      square: false
-                      columns: 1
-                      card_mod:
-                        style: |
-                          hui-grid-card {
-                            display: grid !important;
-                            grid-template-rows: repeat(auto-fit, 84px) !important;
-                            grid-gap: 8px !important;
-                          }
-                      cards:
-                        - type: custom:button-card
-                          template: scenario-button
-                          name: 🌅 Réveil
-                          icon: mdi:weather-sunny
-                          tap_action:
-                            action: call-service
-                            service: script.scenario_reveil
-                            confirmation:
-                              text: Lancer le scénario réveil ?
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(255, 193, 7,
-                                  0.9), rgba(255, 152, 0, 0.8))
-                              - border: 2px solid rgba(255, 193, 7, 0.8)
-                        - type: custom:button-card
-                          template: scenario-button
-                          name: 🌙 Coucher
-                          icon: mdi:weather-night
-                          tap_action:
-                            action: call-service
-                            service: script.scenario_coucher
-                            confirmation:
-                              text: Lancer le scénario coucher ?
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(63, 81, 181,
-                                  0.9), rgba(103, 58, 183, 0.8))
-                              - border: 2px solid rgba(63, 81, 181, 0.8)
-                        - type: custom:button-card
-                          template: scenario-button
-                          name: 🏠 Absent
-                          icon: mdi:home-export-outline
-                          tap_action:
-                            action: call-service
-                            service: script.scenario_absent
-                            confirmation:
-                              text: Activer le mode absent ?
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(244, 67, 54,
-                                  0.9), rgba(233, 30, 99, 0.8))
-                              - border: 2px solid rgba(244, 67, 54, 0.8)
-                        - type: custom:button-card
-                          template: scenario-button
-                          name: 🎉 Fête
-                          icon: mdi:party-popper
-                          tap_action:
-                            action: call-service
-                            service: script.scenario_fete
-                            confirmation:
-                              text: Lancer le mode fête ?
-                          styles:
-                            card:
-                              - background: >-
-                                  linear-gradient(135deg, rgba(156, 39, 176,
-                                  0.9), rgba(233, 30, 99, 0.8))
-                              - border: 2px solid rgba(156, 39, 176, 0.8)
-    badges: []
+                    - type: custom:button-card
+                      template: scenario-button
+                      name: 🌅 Réveil
+                    - type: custom:button-card
+                      template: scenario-button
+                      name: 🎉 Fête
