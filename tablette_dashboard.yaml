@@ -134,8 +134,7 @@ views:
             ha-card {
               background: transparent !important;
               box-shadow: none !important;
-              width: 90%;
-              margin: 0 auto !important;
+              padding: 0 5% !important;
             }
         cards:
           - type: custom:vertical-stack-in-card
