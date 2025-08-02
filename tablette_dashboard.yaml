@@ -91,7 +91,7 @@ button_card_templates:
       haptic: heavy
 mod_section:
   type: custom:mod-card
-  card_mod: &ref_0
+  card_mod:
     style: |
       .card-content {
         padding: 16px;
@@ -106,7 +106,7 @@ grid_1col:
   type: grid
   columns: 1
   square: false
-  card_mod: &ref_1
+  card_mod:
     style: |
       hui-grid-card {
         display: grid !important;
@@ -116,9 +116,8 @@ grid_1col:
 views:
   - title: Accueil
     path: accueil
-    icon: mdi:home-assistant
     panel: true
-    device_preference: desktop
+    theme: alforis-tablette
     background:
       image: /local/fond_tablette.webp
       size: cover
@@ -126,73 +125,91 @@ views:
       repeat: no-repeat
       attachment: fixed
     cards:
-      - type: custom:vertical-stack-in-card
+      - type: custom:layout-card
+        layout_type: vertical
+        layout_options:
+          max_cols: 1
+        card_mod:
+          style: |
+            ha-card {
+              background: transparent !important;
+              box-shadow: none !important;
+              width: 90%;
+              margin: 0 auto !important;
+            }
         cards:
-          - type: custom:mod-card
-            style:
-              card:
-                - background: rgba(var(--rgb-card-background-color), 0.95)
-                - backdrop-filter: blur(20px)
-                - padding: 20px 32px
-                - margin: 16px
-                - border-radius: 28px
-                - box-shadow: 0 8px 32px rgba(0,0,0,0.15)
-                - border: 1px solid rgba(var(--rgb-primary-color), 0.1)
-            card:
-              type: horizontal-stack
-              cards:
-                - type: markdown
-                  content: >
-                    ## 🏠 Bonjour {{ user }}
+          - type: custom:vertical-stack-in-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            cards:
+              - type: horizontal-stack
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent;
+                      box-shadow: none;
+                      display: flex;
+                      justify-content: center;
+                      padding: 0 16px;
+                    }
+                    .card-content { text-align: center; width:100%; }
+                cards:
+                  - type: markdown
+                    content: >
+                      ## 🏠 Bonjour {{ user }}
 
-                    *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
+                      *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
 
-                    **🌡️ {{ states('sensor.temp_salon') }}°C** • **⚡ {{
-                    states('sensor.consommation_electrique') }}W**
-                  card_mod:
-                    style: |
-                      ha-card {
-                        background: transparent;
-                        box-shadow: none;
-                        padding: 0;
-                        flex: 1;
-                      }
-                      .card-content {
-                        padding: 0 !important;
-                      }
-                      h2 {
-                        margin: 0 0 8px 0;
-                        font-size: 24px;
-                        background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                      }
-                      em {
-                        font-size: 14px;
-                        color: var(--secondary-text-color);
-                        display: block;
-                        margin-bottom: 8px;
-                      }
-                      strong {
-                        font-size: 13px;
-                        color: var(--accent-color);
-                      }
-                - type: custom:button-card
-                  icon: mdi:cog
-                  size: 40px
-                  show_name: false
-                  tap_action:
-                    action: navigate
-                    navigation_path: /config/dashboard
-                  styles:
-                    card:
-                      - background: rgba(var(--rgb-primary-color), 0.1)
-                      - border-radius: 16px
-                      - width: 56px
-                      - height: 56px
-                      - margin-left: 16px
-                    icon:
-                      - color: var(--primary-color)
+                      **🌡️ {{ states('sensor.temp_salon') }}°C** • **⚡ {{
+                      states('sensor.consommation_electrique') }}W**
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: transparent;
+                          box-shadow: none;
+                          padding: 0;
+                          flex: 1;
+                        }
+                        .card-content {
+                          padding: 0 !important;
+                        }
+                        h2 {
+                          margin: 0 0 8px 0;
+                          font-size: 24px;
+                          background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+                          -webkit-background-clip: text;
+                          -webkit-text-fill-color: transparent;
+                        }
+                        em {
+                          font-size: 14px;
+                          color: var(--secondary-text-color);
+                          display: block;
+                          margin-bottom: 8px;
+                        }
+                        strong {
+                          font-size: 13px;
+                          color: var(--accent-color);
+                        }
+                  - type: custom:button-card
+                    icon: mdi:cog
+                    size: 40px
+                    show_name: false
+                    tap_action:
+                      action: navigate
+                      navigation_path: /config/dashboard
+                    styles:
+                      card:
+                        - background: rgba(var(--rgb-primary-color), 0.1)
+                        - border-radius: 16px
+                        - width: 56px
+                        - height: 56px
+                        - margin-left: 16px
+                      icon:
+                        - color: var(--primary-color)
           - type: horizontal-stack
             cards:
               - type: weather-forecast
@@ -298,7 +315,17 @@ views:
           - type: horizontal-stack
             cards:
               - type: custom:mod-card
-                card_mod: *ref_0
+                card_mod:
+                  style: |
+                    .card-content {
+                      padding: 16px;
+                      background: rgba(var(--rgb-card-background-color), 0.85);
+                      backdrop-filter: blur(20px);
+                      border-radius: 20px;
+                      border: 1px solid rgba(var(--rgb-primary-color), 0.15);
+                      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+                      margin: 0 8px 16px 16px;
+                    }
                 card:
                   type: vertical-stack
                   cards:
@@ -323,7 +350,13 @@ views:
                     - type: grid
                       columns: 1
                       square: false
-                      card_mod: *ref_1
+                      card_mod:
+                        style: |
+                          hui-grid-card {
+                            display: grid !important;
+                            grid-template-rows: repeat(auto-fit, 84px) !important;
+                            grid-gap: 8px !important;
+                          }
                       cards:
                         - type: custom:button-card
                           template: piece-button
@@ -335,8 +368,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(21, 101, 192, 0.9),
-                                  rgba(25, 118, 210, 0.8))
+                                  linear-gradient(135deg, rgba(21, 101, 192,
+                                  0.9), rgba(25, 118, 210, 0.8))
                               - border: 2px solid rgba(21, 101, 192, 0.7)
                         - type: custom:button-card
                           template: piece-button
@@ -348,8 +381,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(25, 118, 210, 0.9),
-                                  rgba(33, 150, 243, 0.8))
+                                  linear-gradient(135deg, rgba(25, 118, 210,
+                                  0.9), rgba(33, 150, 243, 0.8))
                               - border: 2px solid rgba(25, 118, 210, 0.7)
                         - type: custom:button-card
                           template: piece-button
@@ -361,8 +394,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(33, 150, 243, 0.9),
-                                  rgba(66, 165, 245, 0.8))
+                                  linear-gradient(135deg, rgba(33, 150, 243,
+                                  0.9), rgba(66, 165, 245, 0.8))
                               - border: 2px solid rgba(33, 150, 243, 0.7)
               - type: custom:mod-card
                 card_mod:
@@ -418,8 +451,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(245, 127, 23, 0.9),
-                                  rgba(255, 152, 0, 0.8))
+                                  linear-gradient(135deg, rgba(245, 127, 23,
+                                  0.9), rgba(255, 152, 0, 0.8))
                               - border: 2px solid rgba(245, 127, 23, 0.7)
                         - type: custom:button-card
                           template: materiel-button
@@ -431,8 +464,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(255, 152, 0, 0.9),
-                                  rgba(255, 193, 7, 0.8))
+                                  linear-gradient(135deg, rgba(255, 152, 0,
+                                  0.9), rgba(255, 193, 7, 0.8))
                               - border: 2px solid rgba(255, 152, 0, 0.7)
                         - type: custom:button-card
                           template: materiel-button
@@ -444,8 +477,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(255, 193, 7, 0.9),
-                                  rgba(255, 235, 59, 0.8))
+                                  linear-gradient(135deg, rgba(255, 193, 7,
+                                  0.9), rgba(255, 235, 59, 0.8))
                               - border: 2px solid rgba(255, 193, 7, 0.7)
                         - type: custom:button-card
                           template: materiel-button
@@ -457,8 +490,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(255, 235, 59, 0.9),
-                                  rgba(205, 220, 57, 0.8))
+                                  linear-gradient(135deg, rgba(255, 235, 59,
+                                  0.9), rgba(205, 220, 57, 0.8))
                               - border: 2px solid rgba(255, 235, 59, 0.7)
               - type: custom:mod-card
                 card_mod:
@@ -516,8 +549,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(255, 193, 7, 0.9),
-                                  rgba(255, 152, 0, 0.8))
+                                  linear-gradient(135deg, rgba(255, 193, 7,
+                                  0.9), rgba(255, 152, 0, 0.8))
                               - border: 2px solid rgba(255, 193, 7, 0.8)
                         - type: custom:button-card
                           template: scenario-button
@@ -531,8 +564,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(63, 81, 181, 0.9),
-                                  rgba(103, 58, 183, 0.8))
+                                  linear-gradient(135deg, rgba(63, 81, 181,
+                                  0.9), rgba(103, 58, 183, 0.8))
                               - border: 2px solid rgba(63, 81, 181, 0.8)
                         - type: custom:button-card
                           template: scenario-button
@@ -546,8 +579,8 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(244, 67, 54, 0.9),
-                                  rgba(233, 30, 99, 0.8))
+                                  linear-gradient(135deg, rgba(244, 67, 54,
+                                  0.9), rgba(233, 30, 99, 0.8))
                               - border: 2px solid rgba(244, 67, 54, 0.8)
                         - type: custom:button-card
                           template: scenario-button
@@ -561,7 +594,7 @@ views:
                           styles:
                             card:
                               - background: >-
-                                  linear-gradient(135deg, rgba(156, 39, 176, 0.9),
-                                  rgba(233, 30, 99, 0.8))
+                                  linear-gradient(135deg, rgba(156, 39, 176,
+                                  0.9), rgba(233, 30, 99, 0.8))
                               - border: 2px solid rgba(156, 39, 176, 0.8)
     badges: []
