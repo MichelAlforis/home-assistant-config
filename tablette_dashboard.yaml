@@ -1,6 +1,29 @@
-background: center / cover no-repeat url("/local/fond_tablette.webp") fixed
-theme: alforis-tablette
-device_preference: desktop
+# ──────────── Templates & Ancres ────────────
+mod_section: &mod_section
+  type: custom:mod-card
+  card_mod:
+    style: |
+      .card-content {
+        padding: 16px;
+        background: rgba(var(--rgb-card-background-color), 0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(var(--rgb-primary-color), 0.15);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+        margin: 0 8px 16px 16px;
+      }
+
+grid_1col: &grid_1col
+  type: grid
+  columns: 1
+  square: false
+  card_mod:
+    style: |
+      hui-grid-card {
+        display: grid !important;
+        grid-template-rows: repeat(auto-fit, 84px) !important;
+        grid-gap: 8px !important;
+      }
 button_card_templates:
   base-button:
     size: 100%
@@ -89,30 +112,8 @@ button_card_templates:
     hold_action:
       action: more-info
       haptic: heavy
-mod_section:
-  type: custom:mod-card
-  card_mod:
-    style: |
-      .card-content {
-        padding: 16px;
-        background: rgba(var(--rgb-card-background-color), 0.85);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        border: 1px solid rgba(var(--rgb-primary-color), 0.15);
-        box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-        margin: 0 8px 16px 16px;
-      }
-grid_1col:
-  type: grid
-  columns: 1
-  square: false
-  card_mod:
-    style: |
-      hui-grid-card {
-        display: grid !important;
-        grid-template-rows: repeat(auto-fit, 84px) !important;
-        grid-gap: 8px !important;
-      }
+
+# ──────────── La Vue Accueil ────────────
 views:
   - title: Accueil
     path: accueil
@@ -125,28 +126,26 @@ views:
       repeat: no-repeat
       attachment: fixed
 
-    # 1) On ajoute un card_mod sur la vue pour créer les marges
     card_mod:
       style: |
-        /* Padding horizontal 5% autour de TOUT le contenu */
+        /* 1) Marges horizontales sur le panel uniquement */
         :host, hui-view, #view {
           padding-left: 5vw !important;
           padding-right: 5vw !important;
         }
-        /* On garde le fond transparent */
-        ha-card {
+        /* 2) Ne vise que le panel principal */
+        :host > hui-view > #view > ha-card {
           background: transparent !important;
-          box-shadow: none !important;
+          box-shadow: none       !important;
         }
 
-    # 2) Un seul ensemble de cartes imbriquées
     cards:
       - type: custom:vertical-stack-in-card
         card_mod:
           style: |
             ha-card {
               background: transparent !important;
-              box-shadow: none !important;
+              box-shadow: none       !important;
             }
         cards:
 
@@ -195,26 +194,24 @@ views:
                     }
                 cards:
                   - type: custom:button-card
+                    template: nav-button
                     entity: climate.rdc
                     name: 🏠 Thermostat RDC
-                    template: nav-button
                   - type: custom:button-card
+                    template: nav-button
                     entity: sensor.temp_salon
                     name: 🛋️ Salon
-                    template: nav-button
                   - type: custom:button-card
+                    template: nav-button
                     entity: sensor.temp_chambre
                     name: 🛏️ Chambre
-                    template: nav-button
 
           # === PIÈCES / MATÉRIEL / SCÉNARIOS ===
           - type: horizontal-stack
             cards:
               - <<: *mod_section
                 card:
-                  type: grid
-                  columns: 1
-                  square: false
+                  <<: *grid_1col
                   cards:
                     - type: custom:button-card
                       template: piece-button
@@ -222,11 +219,10 @@ views:
                     - type: custom:button-card
                       template: piece-button
                       name: 🏠 R+1
+
               - <<: *mod_section
                 card:
-                  type: grid
-                  columns: 1
-                  square: false
+                  <<: *grid_1col
                   cards:
                     - type: custom:button-card
                       template: materiel-button
@@ -234,11 +230,10 @@ views:
                     - type: custom:button-card
                       template: materiel-button
                       name: 🌡️ Température
+
               - <<: *mod_section
                 card:
-                  type: grid
-                  columns: 1
-                  square: false
+                  <<: *grid_1col
                   cards:
                     - type: custom:button-card
                       template: scenario-button
