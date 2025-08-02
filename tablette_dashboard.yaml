@@ -150,7 +150,7 @@ views:
             }
         cards:
 
-          ## === ENTÊTE ===
+          # === ENTÊTE ===
           - type: markdown
             content: >
               ## 🏠 Bonjour {{ user }}
@@ -165,7 +165,7 @@ views:
                   padding: 16px 0;
                 }
 
-          ## === MÉTÉO + CLIMAT ===
+          # === MÉTÉO + CLIMAT ===
           - type: horizontal-stack
             cards:
               - type: weather-forecast
@@ -207,7 +207,7 @@ views:
                     name: 🛏️ Chambre
                     template: nav-button
 
-          ## === PIÈCES / MATÉRIEL / SCÉNARIOS ===
+          # === PIÈCES / MATÉRIEL / SCÉNARIOS ===
           - type: horizontal-stack
             cards:
               - <<: *mod_section
