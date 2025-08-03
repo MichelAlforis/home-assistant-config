@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Simple HA Dashboard</title>
+    <style>
+        /* Basic Reset & Body Style */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        /* Main container */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+            background: center / cover no-repeat url("/local/fond_tablette.webp") fixed;
+        }
+
+        /* Header section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .header .greeting h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .header .greeting p {
+            margin: 0;
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        .header .sensors {
+            font-size: 0.9em;
+            text-align: right;
+        }
+
+        /* Main content grid */
+        .content {
+            flex-grow: 1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .column.main {
+            flex-grow: 2;
+        }
+
+        .column.sidebar {
+            flex-grow: 1;
+        }
+
+        /* Card styles */
+        .card {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .card.climate-summary {
+            flex-grow: 1;
+        }
+
+        .climate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .climate-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .climate-item .name {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .climate-item .temp {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+        .climate-item .state {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        /* Button styles */
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-size: 1em;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            min-height: 60px;
+        }
+        .btn .icon {
+            font-size: 1.5em; /* For emoji icons */
+        }
+        .btn.piece { background-color: #1565C0; } /* Blue */
+        .btn.materiel { background-color: #F57F17; } /* Orange */
+        .btn.scenario { background-color: #9C27B0; } /* Purple */
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="greeting">
+                <h2 id="greeting">Bonjour !</h2>
+                <p id="date">-- -- ----</p>
+            </div>
+            <div class="sensors">
+                <span id="temp_salon">--°C</span> •
+                <span id="power_usage">--W</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+
+            <!-- Main Column (Weather & Climate) -->
+            <div class="column main">
+                 <!-- Climate Summary -->
+                <div class="card climate-summary">
+                    <h3>🌡️ Climat intérieur</h3>
+                    <div class="climate-grid">
+                        <div class="climate-item" id="climate-adele">
+                            <div class="name">👧 Adèle</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                        <div class="climate-item" id="climate-alex">
+                            <div class="name">👦 Alex</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                        <div class="climate-item" id="climate-bureau">
+                            <div class="name">💼 Bureau</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                        <div class="climate-item" id="climate-cuisine">
+                            <div class="name">🍳 Cuisine</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                        <div class="climate-item" id="climate-entree">
+                            <div class="name">📺 Entrée & TV</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                        <div class="climate-item" id="climate-parents">
+                            <div class="name">🛏️ Parents</div>
+                            <div class="temp">--°C</div>
+                            <div class="state">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Columns -->
+            <div class="column sidebar">
+                <div class="card">
+                    <h3>🏠 Pièces</h3>
+                    <div class="button-grid">
+                        <button class="btn piece" onclick="location.href='rooms.html?room=rdc'">RDC</button>
+                        <button class="btn piece" onclick="location.href='rooms.html?room=etage1'">R+1</button>
+                        <button class="btn piece" onclick="location.href='rooms.html?room=etage2'">R+2</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column sidebar">
+                <div class="card">
+                    <h3>🧰 Matériel</h3>
+                    <div class="button-grid">
+                        <button class="btn materiel" onclick="location.href='devices.html?device=volets'">Volets</button>
+                        <button class="btn materiel" onclick="location.href='devices.html?device=temperature'">Température</button>
+                        <button class="btn materiel" onclick="location.href='devices.html?device=electromenager'">Électroménager</button>
+                        <button class="btn materiel" onclick="location.href='devices.html?device=exterieur'">Extérieur</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column sidebar">
+                <div class="card">
+                    <h3>🎬 Scénarios</h3>
+                    <div class="button-grid">
+                        <button class="btn scenario" data-service="script.scenario_reveil">🌅 Réveil</button>
+                        <button class="btn scenario" data-service="script.scenario_coucher">🌙 Coucher</button>
+                        <button class="btn scenario" data-service="script.scenario_absent">🏠 Absent</button>
+                        <button class="btn scenario" data-service="script.scenario_fete">🎉 Fête</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // 1. CONFIGURATION
+        // =================
+        // IMPORTANT: Replace these values with your Home Assistant details.
+        // Replace with your Home Assistant URL, e.g., 'ws://192.168.1.123:8123/api/websocket'
+        // If using SSL, use 'wss://'
+        var hassUrl = 'ws://YOUR_HA_IP_ADDRESS:8123/api/websocket';
+        // Replace with your Long-Lived Access Token from your Home Assistant profile page.
+        var accessToken = 'YOUR_LONG_LIVED_ACCESS_TOKEN';
+
+        // Internal variables
+        var socket;
+        var messageId = 1;
+        var commandCallbacks = {};
+
+        // 2. DOM ELEMENTS
+        // ===============
+        var elements = {
+            greeting: document.getElementById('greeting'),
+            date: document.getElementById('date'),
+            temp_salon: document.getElementById('temp_salon'),
+            power_usage: document.getElementById('power_usage'),
+            climate: {
+                adele: document.getElementById('climate-adele'),
+                alex: document.getElementById('climate-alex'),
+                bureau: document.getElementById('climate-bureau'),
+                cuisine: document.getElementById('climate-cuisine'),
+                entree: document.getElementById('climate-entree'),
+                parents: document.getElementById('climate-parents')
+            }
+        };
+
+        // 3. CORE WEBSOCKET LOGIC
+        // =======================
+        function connect() {
+            console.log('Connecting to Home Assistant at ' + hassUrl);
+            try {
+                socket = new WebSocket(hassUrl);
+            } catch (e) {
+                console.error('Error creating WebSocket. Check the hassUrl.', e);
+                return;
+            }
+
+            socket.onopen = function() {
+                console.log('Connection established.');
+            };
+
+            socket.onmessage = function(event) {
+                var message = JSON.parse(event.data);
+                // console.log('Received:', message); // Uncomment for debugging
+
+                if (message.type === 'auth_required') {
+                    authenticate();
+                } else if (message.type === 'auth_ok') {
+                    console.log('Authenticated successfully!');
+                    subscribeToStateChanges();
+                    getInitialStates();
+                } else if (message.type === 'auth_invalid') {
+                    console.error('Authentication failed:', message.message);
+                    alert('Home Assistant authentication failed. Check your Access Token.');
+                } else if (message.type === 'event' && message.event.event_type === 'state_changed') {
+                    updateEntity(message.event.data.entity_id, message.event.data.new_state);
+                } else if (message.type === 'result' && message.id in commandCallbacks) {
+                    if (message.success) {
+                        commandCallbacks[message.id](message.result);
+                    } else {
+                        console.error('Command failed:', message.error);
+                    }
+                    delete commandCallbacks[message.id];
+                }
+            };
+
+            socket.onclose = function() {
+                console.log('Connection closed. Retrying in 5 seconds...');
+                setTimeout(connect, 5000);
+            };
+
+            socket.onerror = function(error) {
+                console.error('WebSocket Error:', error);
+                // The onclose event will fire next, triggering a reconnect.
+            };
+        }
+
+        function sendMessage(message, callback) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                console.error('Cannot send message, WebSocket is not connected.');
+                return;
+            }
+            message.id = messageId++;
+            if (callback) {
+                commandCallbacks[message.id] = callback;
+            }
+            // console.log('Sending:', message); // Uncomment for debugging
+            socket.send(JSON.stringify(message));
+        }
+
+        function authenticate() {
+            sendMessage({
+                type: 'auth',
+                access_token: accessToken
+            });
+        }
+
+        function subscribeToStateChanges() {
+            sendMessage({
+                type: 'subscribe_events',
+                event_type: 'state_changed'
+            });
+        }
+
+        function getInitialStates() {
+            sendMessage({ type: 'get_states' }, function(states) {
+                console.log('Received ' + states.length + ' initial states.');
+                for (var i = 0; i < states.length; i++) {
+                    updateEntity(states[i].entity_id, states[i]);
+                }
+            });
+        }
+
+        // 4. UI UPDATE LOGIC
+        // ==================
+        function updateEntity(entityId, state) {
+            if (!state) return;
+
+            switch (entityId) {
+                case 'sensor.temp_salon':
+                    elements.temp_salon.innerText = parseFloat(state.state).toFixed(1) + '°C';
+                    break;
+                case 'sensor.consommation_electrique':
+                    elements.power_usage.innerText = parseInt(state.state, 10) + 'W';
+                    break;
+                case 'climate.adele':
+                    updateClimate('adele', state);
+                    break;
+                case 'climate.alex':
+                    updateClimate('alex', state);
+                    break;
+                case 'climate.bureau':
+                    updateClimate('bureau', state);
+                    break;
+                case 'climate.cuisine':
+                    updateClimate('cuisine', state);
+                    break;
+                case 'climate.entree_tv':
+                    updateClimate('entree', state);
+                    break;
+                case 'climate.parents':
+                    updateClimate('parents', state);
+                    break;
+            }
+        }
+
+        function updateClimate(name, state) {
+            var el = elements.climate[name];
+            if (!el) return;
+
+            var currentTemp = state.attributes.current_temperature;
+            var hvacState = state.state;
+
+            var tempEl = el.querySelector('.temp');
+            var stateEl = el.querySelector('.state');
+
+            if (currentTemp !== null && currentTemp !== undefined) {
+                 tempEl.innerText = parseFloat(currentTemp).toFixed(1) + '°C';
+            } else {
+                 tempEl.innerText = '--°C';
+            }
+
+            stateEl.innerText = hvacState.charAt(0).toUpperCase() + hvacState.slice(1);
+        }
+
+        function updateDateTime() {
+            var now = new Date();
+            var options = { weekday: 'long', day: 'numeric', month: 'long' };
+            var dateString = now.toLocaleDateString('fr-FR', options);
+            elements.date.innerText = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+        }
+
+        // 5. SERVICE CALL LOGIC
+        // =====================
+        function callService(serviceString) {
+            var parts = serviceString.split('.');
+            if (parts.length < 2) {
+                console.error('Invalid service format:', serviceString);
+                return;
+            }
+            var domain = parts[0];
+            var service = parts.slice(1).join('.');
+
+            console.log('Calling service -> Domain: ' + domain + ', Service: ' + service);
+            sendMessage({
+                type: 'call_service',
+                domain: domain,
+                service: service,
+                target: {
+                    entity_id: serviceString
+                }
+            }, function(result) {
+                console.log('Service call for "' + serviceString + '" was successful.');
+                // Provide simple feedback to the user.
+                var button = document.querySelector('.btn[data-service="' + serviceString + '"]');
+                var friendlyName = button ? button.innerText : serviceString;
+                // Not showing an alert on success to avoid being too noisy.
+                // The device state change should be feedback enough.
+            });
+        }
+
+        // 6. INITIALIZATION
+        // =================
+        function initializeScenarioButtons() {
+            var scenarioButtons = document.querySelectorAll('.btn.scenario');
+            for (var i = 0; i < scenarioButtons.length; i++) {
+                scenarioButtons[i].addEventListener('click', function(e) {
+                    var service = e.currentTarget.getAttribute('data-service');
+                    if (service) {
+                        var friendlyName = e.currentTarget.innerText;
+                        if (confirm('Lancer le scénario "' + friendlyName + '" ?')) {
+                            callService(service);
+                        }
+                    }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (hassUrl === 'ws://YOUR_HA_IP_ADDRESS:8123/api/websocket' || accessToken === 'YOUR_LONG_LIVED_ACCESS_TOKEN') {
+                alert('Veuillez configurer l\'URL et le jeton d\'accès Home Assistant dans le fichier simple-ha.html');
+                return;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+
+            initializeScenarioButtons();
+            connect();
+        });
+
+    })();
+    </script>
+</body>
+</html>
