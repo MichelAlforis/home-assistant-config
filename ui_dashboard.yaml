@@ -8,7 +8,7 @@ resources:
   - url: /hacsfiles/stack-in-card/stack-in-card.js
     type: module
 background: center / cover no-repeat url("/local/fond_tablette.webp") fixed
-theme: alforis-tablette
+theme: alforis-tablette-transparent
 device_preference: desktop
 button_card_templates:
   base-button:
@@ -141,7 +141,6 @@ views:
             card_mod:
               style: |
                 ha-card {
-                  background: transparent;
                   backdrop-filter: blur(20px);
                   padding: 8px 16px;
                   margin: 8px 12px;
@@ -224,7 +223,6 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      background: transparent;
                       backdrop-filter: blur(20px);
                       border-radius: 20px;
                       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -237,7 +235,6 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      background: transparent;
                       backdrop-filter: blur(20px);
                       border-radius: 20px;
                       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -606,7 +603,6 @@ views:
             card_mod:
               style: |
                 ha-card {
-                  background: transparent !important;
                   backdrop-filter: blur(20px);
                   border-radius: 20px;
                   border: 1px solid rgba(255, 255, 255, 0.2);
