@@ -1,0 +1,4 @@
+- platform: group
+  name: "All Covers"
+  entities:
+    - cover.example_cover

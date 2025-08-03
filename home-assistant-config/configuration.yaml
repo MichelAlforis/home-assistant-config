@@ -21,11 +21,13 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 
 # Covers
-cover: !include covers/cover_groups.yaml
+cover:
+  - !include covers/cover_groups.yaml
+  - platform: template
+    covers: !include templates/cover_templates.yaml
 
 # Capteurs
 template:
-  - !include templates/cover_templates.yaml
   - !include templates/sensor_pac.yaml
 
 # Groupe spécifique à l'iPad

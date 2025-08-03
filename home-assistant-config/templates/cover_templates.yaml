@@ -1,0 +1,10 @@
+example_cover:
+  friendly_name: "Example Cover"
+  open_cover:
+    service: switch.turn_on
+    target:
+      entity_id: switch.example_cover
+  close_cover:
+    service: switch.turn_off
+    target:
+      entity_id: switch.example_cover

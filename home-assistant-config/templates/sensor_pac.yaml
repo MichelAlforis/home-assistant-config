@@ -1,0 +1,4 @@
+sensor:
+  - name: "Example PAC Sensor"
+    unit_of_measurement: "°C"
+    state: "{{ 0 }}"
