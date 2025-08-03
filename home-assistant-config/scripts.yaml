@@ -3,37 +3,24 @@ scenario_reveil:
   sequence:
     - service: cover.open_cover
       target:
-        entity_id: cover.tous_les_volets
-    - service: climate.set_temperature
+        entity_id: cover.volets
+    - service: climate.turn_on
       target:
         entity_id:
-          - climate.rez_de_chaussee
-          - climate.chambres
-      data:
-        temperature: 21
+          - climate.adele
+          - climate.alex
+          - climate.bureau
+          - climate.cuisine
+          - climate.entree_tv
+          - climate.parents
+  mode: single
 
 scenario_coucher:
   alias: Scénario Coucher
   sequence:
     - service: cover.close_cover
       target:
-        entity_id: cover.tous_les_volets
-    - service: switch.turn_off
-      target:
-        entity_id:
-          - switch.adele
-          - switch.alex
-          - switch.bureau
-          - switch.cuisine
-          - switch.entree_tv
-          - switch.parents
-
-scenario_absent:
-  alias: Scénario Absent
-  sequence:
-    - service: cover.close_cover
-      target:
-        entity_id: cover.tous_les_volets
+        entity_id: cover.volets
     - service: climate.turn_off
       target:
         entity_id:
@@ -43,17 +30,54 @@ scenario_absent:
           - climate.cuisine
           - climate.entree_tv
           - climate.parents
+  mode: single
 
-scenario_fete:
-  alias: Scénario Fête
+scenario_absent:
+  alias: Mode Absent
   sequence:
-    - service: cover.open_cover
+    - service: cover.close_cover
       target:
-        entity_id: cover.volets_rdc_2
-    - service: switch.turn_on
+        entity_id: cover.volets
+    - service: switch.turn_off
       target:
         entity_id:
           - switch.adele
           - switch.alex
           - switch.bureau
+          - switch.cuisine
+          - switch.entree_tv
+          - switch.parents
+    - service: climate.turn_off
+      target:
+        entity_id:
+          - climate.adele
+          - climate.alex
+          - climate.bureau
+          - climate.cuisine
+          - climate.entree_tv
+          - climate.parents
+  mode: single
 
+scenario_fete:
+  alias: Mode Fête
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: light.connectivity_kit_ledbox
+  mode: single
+
+scenario_soiree_film:
+  alias: Scénario Soirée Film
+  sequence:
+    - service: automation.trigger
+      target:
+        entity_id: automation.soiree_film
+  mode: single
+
+scenario_nuit:
+  alias: Scénario Nuit
+  sequence:
+    - service: automation.trigger
+      target:
+        entity_id: automation.nuit
+  mode: single

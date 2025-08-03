@@ -1,13 +1,127 @@
-# yaml-language-server: validate false
-# yaml-language-server: $schema=https://json.schemastore.org/ui-lovelace.json
-theme: alforis-tablette
-device_preference: desktop
-button_card_templates: !include lovelace/button_card_templates.yaml
 views:
-  - title: Accueil
-    path: accueil
-    icon: mdi:home-assistant
-    panel: true
+     panel: true
+     theme: alforis-tablette
+     background:
+       image: /local/fond_tablette.webp
+       size: cover
+       alignment: center
+       repeat: no-repeat
+       attachment: fixed
+     cards:
+       - type: custom:vertical-stack-in-card
+         card_mod:
+           class: transparent-card
+         cards:
+           - type: custom:mod-card
+             card_mod:
+               class: glass-card header-card
+             card:
+               type: horizontal-stack
+               cards:
+                 - type: markdown
+                   content: >
+                     ## 🏠 Bonjour {{ user }}
+ 
+                     *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
+                    **🌡️ {{ state_attr('weather.forecast_maison','temperature') }}°C** • **📡 {{ states('sensor.freebox_download_speed') }} kB/s**
+                   card_mod:
+                     class: transparent-card welcome-card
+                 - type: custom:button-card
+                   icon: mdi:cog
+                   size: 40px
+                   show_name: false
+                   tap_action:
+                     action: navigate
+                     navigation_path: /config/dashboard
+                   styles:
+                     card:
+                       - background: rgba(var(--rgb-primary-color),0.1)
+                       - border-radius: 12px
+                       - width: 40px
+                       - height: 40px
+                       - margin-left: 12px
+                     icon:
+                       - color: var(--primary-color)
+                       - width: 20px
+                       - height: 20px
+           - type: horizontal-stack
+             cards:
+               - type: weather-forecast
+                 entity: weather.forecast_maison
+                 show_current: true
+                       tap_action:
+                         action: call-service
+                         service: script.scenario_coucher
+                         confirmation:
+                           text: Lancer le scénario coucher ?
+                       styles:
+                         card:
+                           - background: >-
+                               linear-gradient(135deg, rgba(63, 81, 181, 0.9),
+                               rgba(103, 58, 183, 0.8))
+                           - border: 2px solid rgba(63, 81, 181, 0.8)
+                     - type: custom:button-card
+                       template: scenario-button
+                       name: 🏠 Absent
+                       icon: mdi:home-export-outline
+                       tap_action:
+                         action: call-service
+                         service: script.scenario_absent
+                         confirmation:
+                           text: Activer le mode absent ?
+                       styles:
+                         card:
+                           - background: >-
+                               linear-gradient(135deg, rgba(244, 67, 54, 0.9),
+                               rgba(233, 30, 99, 0.8))
+                      - border: 2px solid rgba(244, 67, 54, 0.8)
+                     - type: custom:button-card
+                       template: scenario-button
+                       name: 🎉 Fête
+                       icon: mdi:party-popper
+                       tap_action:
+                         action: call-service
+                         service: script.scenario_fete
+                         confirmation:
+                           text: Lancer le mode fête ?
+                      styles:
+                        card:
+                          - background: >-
+                              linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8))
+                          - border: 2px solid rgba(156, 39, 176, 0.8)
+                    - type: custom:button-card
+                      template: scenario-button
+                      name: 🎥 Soirée Film
+                      icon: mdi:movie
+                      tap_action:
+                        action: call-service
+                        service: script.scenario_soiree_film
+                        confirmation:
+                          text: Lancer le scénario soirée film ?
+                      styles:
+                        card:
+                          - background: >-
+                              linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8))
+                          - border: 2px solid rgba(0, 150, 136, 0.8)
+                    - type: custom:button-card
+                      template: scenario-button
+                      name: 🌌 Nuit
+                      icon: mdi:power-sleep
+                      tap_action:
+                        action: call-service
+                        service: script.scenario_nuit
+                        confirmation:
+                          text: Lancer le scénario nuit ?
+                      styles:
+                        card:
+                          - background: >-
+                              linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8))
+                          - border: 2px solid rgba(33, 33, 33, 0.8)
+    badges: []
+
+  - title: Pièces
+    path: pieces
+    icon: mdi:floor-plan
     theme: alforis-tablette
     background:
       image: /local/fond_tablette.webp
@@ -16,326 +130,498 @@ views:
       repeat: no-repeat
       attachment: fixed
     cards:
-      - type: custom:stack-in-card
-        card_mod:
-          class: transparent-card
+      - type: grid
+        columns: 2
+        square: false
         cards:
-          - type: custom:mod-card
-            card_mod:
-              class: glass-card header-card
-            card:
-              type: horizontal-stack
-              cards:
-                - type: markdown
-                  content: >
-                    ## 🏠 Bonjour {{ user }}
+          - type: custom:button-card
+            template: climate-button
+            name: "👧 Adèle"
+            entity: climate.adele
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/adele
+          - type: custom:button-card
+            template: climate-button
+            name: "👦 Alex"
+            entity: climate.alex
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/alex
+          - type: custom:button-card
+            template: climate-button
+            name: "💼 Bureau"
+            entity: climate.bureau
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/bureau
+          - type: custom:button-card
+            template: climate-button
+            name: "🍳 Cuisine"
+            entity: climate.cuisine
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/cuisine
+          - type: custom:button-card
+            template: climate-button
+            name: "📺 Entrée & TV"
+            entity: climate.entree_tv
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/entree_tv
+          - type: custom:button-card
+            template: climate-button
+            name: "🛏️ Parents"
+            entity: climate.parents
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/parents
+    badges: []
 
-                    *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
-
-                    **🌡️ {{ states('sensor.temp_salon') }}°C** • **⚡ {{
-                    states('sensor.consommation_electrique') }}W**
-                  card_mod:
-                    class: transparent-card welcome-card
-                - type: custom:button-card
-                  icon: mdi:cog
-                  size: 40px
-                  show_name: false
-                  tap_action:
-                    action: navigate
-                    navigation_path: /config/dashboard
-                  styles:
-                    card:
-                      - background: rgba(var(--rgb-primary-color),0.1)
-                      - border-radius: 12px
-                      - width: 40px
-                      - height: 40px
-                      - margin-left: 12px
-                    icon:
-                      - color: var(--primary-color)
-                      - width: 20px
-                      - height: 20px
-          - type: horizontal-stack
-            cards:
-              - type: weather-forecast
-                entity: weather.forecast_maison
-                show_current: true
-                show_forecast: true
-                forecast_type: daily
-                name: Météo
-                secondary_info_attribute: humidity
-                card_mod:
-                  class: glass-card weather-card
-              - type: custom:mod-card
-                card_mod:
-                  class: glass-card climate-container-card
-                card:
-                  type: vertical-stack
-                  cards:
-                    - type: markdown
-                      content: |
-                        ### 🌡️ Climat intérieur
-                      card_mod:
-                        class: transparent-card climate-title-card
-                    - type: grid
-                      columns: 3
-                      square: false
-                      card_mod:
-                        class: climate-grid
-                      cards:
-                      - type: custom:button-card
-                          template: climate-button
-                          name: 👧 Adèle
-                          entity: sensor.info_climat_adele
-                          variables:
-                            climate_entity: climate.adele
-                      - type: custom:button-card
-                          template: climate-button
-                          name: 👦 Alex
-                          entity: sensor.info_climat_alex
-                          variables:
-                            climate_entity: climate.alex
-                        - type: custom:button-card
-                          template: climate-button
-                          name: 💼 Bureau
-                          entity: sensor.info_climat_bureau
-                          variables:
-                            climate_entity: climate.bureau
-                        - type: custom:button-card
-                          template: climate-button
-                          name: 🍳 Cuisine
-                          entity: sensor.info_climat_cuisine
-                          variables:
-                            climate_entity: climate.cuisine
-                        - type: custom:button-card
-                          template: climate-button
-                          name: 📺 Entrée & TV
-                          entity: sensor.info_climat_entree
-                          variables:
-                            climate_entity: climate.entree_tv
-                        - type: custom:button-card
-                          template: climate-button
-                          name: 🛏️ Parents
-                          entity: sensor.info_climat_parents
-                          variables:
-                            climate_entity: climate.parents
-          - type: custom:mod-card
-            card_mod:
-              class: glass-card main-nav-card
-            card:
-              type: horizontal-stack
-              cards:
-                - type: vertical-stack
-                  cards:
-                    - type: markdown
-                      content: "### 🏠 **Pièces**"
-                      card_mod:
-                        class: transparent-card section-title-card
-                    - type: custom:button-card
-                      template: piece-button
-                      name: 🏠 RDC
-                      icon: mdi:home-floor-0
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/rdc
-                    - type: custom:button-card
-                      template: piece-button
-                      name: 🏠 R+1
-                      icon: mdi:home-floor-1
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/etage1
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(25, 118, 210, 0.9),
-                              rgba(33, 150, 243, 0.8))
-                          - border: 2px solid rgba(25, 118, 210, 0.7)
-                    - type: custom:button-card
-                      template: piece-button
-                      name: 🏠 R+2
-                      icon: mdi:home-floor-2
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/etage2
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(33, 150, 243, 0.9),
-                              rgba(66, 165, 245, 0.8))
-                          - border: 2px solid rgba(33, 150, 243, 0.7)
-                - type: vertical-stack
-                  cards:
-                    - type: markdown
-                      content: "### 🧰 **Matériel**"
-                      card_mod:
-                        class: transparent-card section-title-card materiel
-                    - type: custom:button-card
-                      template: materiel-button
-                      name: 🪟 Volets
-                      icon: mdi:window-shutter
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/volets
-                    - type: custom:button-card
-                      template: materiel-button
-                      name: 🌡️ Température
-                      icon: mdi:thermometer
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/temperature
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(255, 152, 0, 0.9),
-                              rgba(255, 193, 7, 0.8))
-                          - border: 2px solid rgba(255, 152, 0, 0.7)
-                    - type: custom:button-card
-                      template: materiel-button
-                      name: 🔌 Électroménager
-                      icon: mdi:washing-machine
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/electromenager
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(255, 193, 7, 0.9),
-                              rgba(255, 235, 59, 0.8))
-                          - border: 2px solid rgba(255, 193, 7, 0.7)
-                    - type: custom:button-card
-                      template: materiel-button
-                      name: 🌿 Extérieur
-                      icon: mdi:pine-tree
-                      tap_action:
-                        action: navigate
-                        navigation_path: /lovelace/exterieur
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(139, 195, 74, 0.9),
-                              rgba(156, 204, 101, 0.8))
-                          - border: 2px solid rgba(139, 195, 74, 0.7)
-                - type: vertical-stack
-                  cards:
-                    - type: markdown
-                      content: "### 🎬 **Scénarios**"
-                      card_mod:
-                        class: transparent-card section-title-card scenarios
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🌅 Réveil
-                      icon: mdi:weather-sunny
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_reveil
-                        confirmation:
-                          text: Lancer le scénario réveil ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(255, 193, 7, 0.9),
-                              rgba(255, 152, 0, 0.8))
-                          - border: 2px solid rgba(255, 193, 7, 0.8)
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🌙 Coucher
-                      icon: mdi:weather-night
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_coucher
-                        confirmation:
-                          text: Lancer le scénario coucher ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(63, 81, 181, 0.9),
-                              rgba(103, 58, 183, 0.8))
-                          - border: 2px solid rgba(63, 81, 181, 0.8)
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🏠 Absent
-                      icon: mdi:home-export-outline
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_absent
-                        confirmation:
-                          text: Activer le mode absent ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(244, 67, 54, 0.9),
-                              rgba(233, 30, 99, 0.8))
-                          - border: 2px solid rgba(244, 67, 54, 0.8)
-                      - type: custom:button-card
-                        template: scenario-button
-                        name: 🎉 Fête
-                        icon: mdi:party-popper
-                        tap_action:
-                          action: call-service
-                          service: script.scenario_fete
-                          confirmation:
-                            text: Lancer le mode fête ?
+  - title: Matériel
+    path: materiel
+    icon: mdi:tools
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:button-card
+            template: materiel-button
+            name: "🪟 Volets"
+            icon: mdi:window-shutter
+            tap_action:
+              action: more-info
+            entity: cover.volets
+          - type: custom:button-card
+            template: materiel-button
+            name: "🌡️ Température"
+            icon: mdi:thermometer
+            tap_action:
+              action: more-info
+            entity: weather.forecast_maison
+          - type: custom:button-card
+            template: materiel-button
+            name: "🔌 Électroménager"
+            icon: mdi:washing-machine
+            tap_action:
+              action: more-info
+            entity: switch.lave_vaisselle_etat
+          - type: custom:button-card
+            template: materiel-button
+            name: "🌿 Extérieur"
+            icon: mdi:pine-tree
+            tap_action:
+              action: more-info
+            entity: binary_sensor.irrigation_unlimited_c1_m
+          - type: custom:button-card
+            template: materiel-button
+            name: "📶 Réseau"
+            icon: mdi:router-network
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/reseau
+          - type: custom:button-card
+            template: materiel-button
+            name: "🖨️ Imprimante"
+            icon: mdi:printer
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/imprimante
     badges: []
 
   - title: RDC
     path: rdc
     icon: mdi:home-floor-0
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
-      - type: markdown
-        content: "## Rez de Chaussée\nContenu à compléter."
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:button-card
+            template: climate-button
+            name: "🍳 Cuisine"
+            entity: climate.cuisine
+          - type: custom:button-card
+            template: climate-button
+            name: "📺 Entrée & TV"
+            entity: climate.entree_tv
+      - type: entities
+        title: "Volets RDC"
+        entities:
+          - cover.volets_rdc_2
+    badges: []
 
-  - title: R+1
+  - title: R1
     path: etage1
     icon: mdi:home-floor-1
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
-      - type: markdown
-        content: "## Premier étage\nContenu à compléter."
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:button-card
+            template: climate-button
+            name: "👧 Adèle"
+            entity: climate.adele
+          - type: custom:button-card
+            template: climate-button
+            name: "👦 Alex"
+            entity: climate.alex
+          - type: custom:button-card
+            template: climate-button
+            name: "💼 Bureau"
+            entity: climate.bureau
+          - type: custom:button-card
+            template: climate-button
+            name: "🛏️ Parents"
+            entity: climate.parents
+      - type: entities
+        title: "Volets Chambres"
+        entities:
+          - cover.volets_chambres_2
+    badges: []
 
-  - title: R+2
+  - title: R2
     path: etage2
     icon: mdi:home-floor-2
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
-      - type: markdown
-        content: "## Deuxième étage\nContenu à compléter."
+      - type: custom:button-card
+        template: climate-button
+        name: "Chambres"
+        entity: climate.chambres
+    badges: []
 
   - title: Volets
     path: volets
     icon: mdi:window-shutter
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
       - type: entities
-        title: Gestion des volets
+        title: "Gestion des volets"
         entities:
           - cover.tous_les_volets
-          - cover.volets_chambres_2
           - cover.volets_rdc_2
+          - cover.volets_chambres_2
+    badges: []
 
   - title: Température
     path: temperature
     icon: mdi:thermometer
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
-      - type: grid
-        columns: 2
-        cards:
-          - type: thermostat
-            entity: climate.rez_de_chaussee
-          - type: thermostat
-            entity: climate.chambres
+      - type: entities
+        title: "Températures"
+        entities:
+          - sensor.adele_temperature
+          - sensor.alex_temperature
+          - sensor.bureau_temperature
+          - sensor.cuisine_temperature
+          - sensor.entree_tv_temperature
+          - sensor.parents_temperature
+    badges: []
 
   - title: Électroménager
     path: electromenager
     icon: mdi:washing-machine
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
       - type: entities
-        title: Appareils
+        title: "Lave-vaisselle"
         entities:
           - switch.lave_vaisselle_etat
           - sensor.lave_vaisselle_etat
+          - sensor.lave_vaisselle_porte
+      - type: entities
+        title: "Table de cuisson"
+        entities:
           - switch.table_de_cuisson_etat
+          - switch.table_de_cuisson_securite_enfant
           - sensor.table_de_cuisson_etat
+    badges: []
 
   - title: Extérieur
     path: exterieur
     icon: mdi:pine-tree
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
     cards:
+      - type: entities
+        title: "Arrosage"
+        entities:
+          - binary_sensor.irrigation_unlimited_c1_m
+          - binary_sensor.irrigation_unlimited_c1_z1
+          - binary_sensor.irrigation_unlimited_c1_z2
+          - binary_sensor.irrigation_unlimited_c1_z3
       - type: weather-forecast
         entity: weather.forecast_maison
+        show_current: true
+        show_forecast: true
+        forecast_type: daily
+    badges: []
+
+  - title: Réseau
+    path: reseau
+    icon: mdi:router-network
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: entities
+        title: "Freebox"
+        entities:
+          - device_tracker.freebox_v9_r1
+          - sensor.freebox_download_speed
+          - sensor.freebox_upload_speed
+          - sensor.freebox_temperature_cpu_0
+      - type: entities
+        title: "Appareils connectés"
+        entities:
+          - device_tracker.imx6ull14x14evk
+          - device_tracker.iphone_9
+          - device_tracker.samsung
+    badges: []
+
+  - title: Imprimante
+    path: imprimante
+    icon: mdi:printer
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: entities
+        title: "HP DeskJet 3700"
+        entities:
+          - sensor.hp_deskjet_3700_series
+          - sensor.hp_deskjet_3700_series_black_ink
+          - sensor.hp_deskjet_3700_series_tri_color_ink
+    badges: []
+
+  - title: Chambre Adèle
+    path: adele
+    icon: mdi:account-child
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Adèle"
+        entity: climate.adele
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_adele_arriere
+          - cover.fenetre_adele_ru
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.adele_temperature
+          - sensor.adele_humidite
+          - binary_sensor.adele_probleme
+    badges: []
+
+  - title: Chambre Alex
+    path: alex
+    icon: mdi:account-child
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Alex"
+        entity: climate.alex
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_alex_jar
+          - cover.fenetre_alex_rue
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.alex_temperature
+          - sensor.alex_humidite
+          - binary_sensor.alex_probleme
+    badges: []
+
+  - title: Bureau
+    path: bureau
+    icon: mdi:briefcase
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Bureau"
+        entity: climate.bureau
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_bureau
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.bureau_temperature
+          - sensor.bureau_humidite
+          - binary_sensor.bureau_probleme
+    badges: []
+
+  - title: Cuisine
+    path: cuisine
+    icon: mdi:pot-mix
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Cuisine"
+        entity: climate.cuisine
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_cuisine
+          - cover.fenetre_cuisine_avant
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.cuisine_temperature
+          - sensor.cuisine_humidite
+          - binary_sensor.cuisine_probleme
+    badges: []
+
+  - title: Entrée & TV
+    path: entree_tv
+    icon: mdi:television
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Entrée & TV"
+        entity: climate.entree_tv
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_entree
+          - cover.fenetre_salon_central
+          - cover.fenetre_salon_dr
+          - cover.fenetre_salon_gauche
+          - cover.fenetre_salon_tv
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.entree_tv_temperature
+          - sensor.entree_tv_humidite
+          - binary_sensor.entree_tv_probleme
+    badges: []
+
+  - title: Suite Parents
+    path: parents
+    icon: mdi:bed-king
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:button-card
+        template: climate-button
+        name: "Climat Parents"
+        entity: climate.parents
+      - type: entities
+        title: "Volets"
+        entities:
+          - cover.fenetre_sdb_suite
+          - cover.fenetre_suite
+      - type: entities
+        title: "Capteurs"
+        entities:
+          - sensor.parents_temperature
+          - sensor.parents_humidite
+          - binary_sensor.parents_probleme
+     badges: []
