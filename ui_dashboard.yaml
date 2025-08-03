@@ -1,122 +1,122 @@
 views:
-     panel: true
-     theme: alforis-tablette
-     background:
-       image: /local/fond_tablette.webp
-       size: cover
-       alignment: center
-       repeat: no-repeat
-       attachment: fixed
-     cards:
-       - type: custom:vertical-stack-in-card
-         card_mod:
-           class: transparent-card
-         cards:
-           - type: custom:mod-card
-             card_mod:
-               class: glass-card header-card
-             card:
-               type: horizontal-stack
-               cards:
-                 - type: markdown
-                   content: >
-                     ## 🏠 Bonjour {{ user }}
- 
-                     *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
+  - panel: true
+    theme: alforis-tablette
+    background:
+      image: /local/fond_tablette.webp
+      size: cover
+      alignment: center
+      repeat: no-repeat
+      attachment: fixed
+    cards:
+      - type: custom:vertical-stack-in-card
+        card_mod:
+          class: transparent-card
+        cards:
+          - type: custom:mod-card
+            card_mod:
+              class: glass-card header-card
+            card:
+              type: horizontal-stack
+              cards:
+                - type: markdown
+                  content: >
+                    ## 🏠 Bonjour {{ user }}
+
+                    *{{ now().strftime('%A %d %B %Y') }} - Maison connectée*
                     **🌡️ {{ state_attr('weather.forecast_maison','temperature') }}°C** • **📡 {{ states('sensor.freebox_download_speed') }} kB/s**
-                   card_mod:
-                     class: transparent-card welcome-card
-                 - type: custom:button-card
-                   icon: mdi:cog
-                   size: 40px
-                   show_name: false
-                   tap_action:
-                     action: navigate
-                     navigation_path: /config/dashboard
-                   styles:
-                     card:
-                       - background: rgba(var(--rgb-primary-color),0.1)
-                       - border-radius: 12px
-                       - width: 40px
-                       - height: 40px
-                       - margin-left: 12px
-                     icon:
-                       - color: var(--primary-color)
-                       - width: 20px
-                       - height: 20px
-           - type: horizontal-stack
-             cards:
-               - type: weather-forecast
-                 entity: weather.forecast_maison
-                 show_current: true
-                       tap_action:
-                         action: call-service
-                         service: script.scenario_coucher
-                         confirmation:
-                           text: Lancer le scénario coucher ?
-                       styles:
-                         card:
-                           - background: >-
-                               linear-gradient(135deg, rgba(63, 81, 181, 0.9),
-                               rgba(103, 58, 183, 0.8))
-                           - border: 2px solid rgba(63, 81, 181, 0.8)
-                     - type: custom:button-card
-                       template: scenario-button
-                       name: 🏠 Absent
-                       icon: mdi:home-export-outline
-                       tap_action:
-                         action: call-service
-                         service: script.scenario_absent
-                         confirmation:
-                           text: Activer le mode absent ?
-                       styles:
-                         card:
-                           - background: >-
-                               linear-gradient(135deg, rgba(244, 67, 54, 0.9),
-                               rgba(233, 30, 99, 0.8))
-                      - border: 2px solid rgba(244, 67, 54, 0.8)
-                     - type: custom:button-card
-                       template: scenario-button
-                       name: 🎉 Fête
-                       icon: mdi:party-popper
-                       tap_action:
-                         action: call-service
-                         service: script.scenario_fete
-                         confirmation:
-                           text: Lancer le mode fête ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8))
-                          - border: 2px solid rgba(156, 39, 176, 0.8)
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🎥 Soirée Film
-                      icon: mdi:movie
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_soiree_film
-                        confirmation:
-                          text: Lancer le scénario soirée film ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8))
-                          - border: 2px solid rgba(0, 150, 136, 0.8)
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🌌 Nuit
-                      icon: mdi:power-sleep
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_nuit
-                        confirmation:
-                          text: Lancer le scénario nuit ?
-                      styles:
-                        card:
-                          - background: >-
-                              linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8))
-                          - border: 2px solid rgba(33, 33, 33, 0.8)
+                  card_mod:
+                    class: transparent-card welcome-card
+                - type: custom:button-card
+                  icon: mdi:cog
+                  size: 40px
+                  show_name: false
+                  tap_action:
+                    action: navigate
+                    navigation_path: /config/dashboard
+                  styles:
+                    card:
+                      - background: rgba(var(--rgb-primary-color),0.1)
+                      - border-radius: 12px
+                      - width: 40px
+                      - height: 40px
+                      - margin-left: 12px
+                    icon:
+                      - color: var(--primary-color)
+                      - width: 20px
+                      - height: 20px
+          - type: horizontal-stack
+            cards:
+              - type: weather-forecast
+                entity: weather.forecast_maison
+                show_current: true
+                tap_action:
+                  action: call-service
+                  service: script.scenario_coucher
+                  confirmation:
+                    text: Lancer le scénario coucher ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(63, 81, 181, 0.9),
+                        rgba(103, 58, 183, 0.8))
+                    - border: 2px solid rgba(63, 81, 181, 0.8)
+              - type: custom:button-card
+                template: scenario-button
+                name: "🏠 Absent"
+                icon: mdi:home-export-outline
+                tap_action:
+                  action: call-service
+                  service: script.scenario_absent
+                  confirmation:
+                    text: Activer le mode absent ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(244, 67, 54, 0.9),
+                        rgba(233, 30, 99, 0.8))
+                    - border: 2px solid rgba(244, 67, 54, 0.8)
+              - type: custom:button-card
+                template: scenario-button
+                name: "🎉 Fête"
+                icon: mdi:party-popper
+                tap_action:
+                  action: call-service
+                  service: script.scenario_fete
+                  confirmation:
+                    text: Lancer le mode fête ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8))
+                    - border: 2px solid rgba(156, 39, 176, 0.8)
+              - type: custom:button-card
+                template: scenario-button
+                name: "🎥 Soirée Film"
+                icon: mdi:movie
+                tap_action:
+                  action: call-service
+                  service: script.scenario_soiree_film
+                  confirmation:
+                    text: Lancer le scénario soirée film ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8))
+                    - border: 2px solid rgba(0, 150, 136, 0.8)
+              - type: custom:button-card
+                template: scenario-button
+                name: "🌌 Nuit"
+                icon: mdi:power-sleep
+                tap_action:
+                  action: call-service
+                  service: script.scenario_nuit
+                  confirmation:
+                    text: Lancer le scénario nuit ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8))
+                    - border: 2px solid rgba(33, 33, 33, 0.8)
     badges: []
 
   - title: Pièces
@@ -624,4 +624,4 @@ views:
           - sensor.parents_temperature
           - sensor.parents_humidite
           - binary_sensor.parents_probleme
-     badges: []
+    badges: []
