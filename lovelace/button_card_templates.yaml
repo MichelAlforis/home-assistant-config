@@ -1,0 +1,47 @@
+base-button:
+  show_icon: true
+  show_name: true
+  show_state: false
+  tap_action:
+    action: more-info
+  hold_action:
+    action: more-info
+  styles:
+    card:
+      - border-radius: 12px
+      - padding: 12px
+      - background: rgba(255,255,255,0.1)
+      - box-shadow: none
+    icon:
+      - width: 32px
+      - height: 32px
+    name:
+      - font-weight: bold
+      - justify-self: start
+
+climate-button:
+  template: base-button
+  variables:
+    climate_entity: null
+  show_state: true
+
+piece-button:
+  template: base-button
+  styles:
+    card:
+      - min-width: 120px
+      - margin: 4px
+
+materiel-button:
+  template: base-button
+  styles:
+    card:
+      - min-width: 120px
+      - margin: 4px
+
+scenario-button:
+  template: base-button
+  styles:
+    card:
+      - min-width: 120px
+      - margin: 4px

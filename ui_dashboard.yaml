@@ -16,7 +16,7 @@ views:
       repeat: no-repeat
       attachment: fixed
     cards:
-      - type: custom:vertical-stack-in-card
+      - type: custom:stack-in-card
         card_mod:
           class: transparent-card
         cards:
@@ -82,13 +82,13 @@ views:
                       card_mod:
                         class: climate-grid
                       cards:
-                        - type: custom:button-card
+                      - type: custom:button-card
                           template: climate-button
                           name: 👧 Adèle
                           entity: sensor.info_climat_adele
                           variables:
                             climate_entity: climate.adele
-                        - type: custom:button-card
+                      - type: custom:button-card
                           template: climate-button
                           name: 👦 Alex
                           entity: sensor.info_climat_alex
@@ -266,13 +266,76 @@ views:
                               linear-gradient(135deg, rgba(244, 67, 54, 0.9),
                               rgba(233, 30, 99, 0.8))
                           - border: 2px solid rgba(244, 67, 54, 0.8)
-                    - type: custom:button-card
-                      template: scenario-button
-                      name: 🎉 Fête
-                      icon: mdi:party-popper
-                      tap_action:
-                        action: call-service
-                        service: script.scenario_fete
-                        confirmation:
-                          text: Lancer le mode fête ?
+                      - type: custom:button-card
+                        template: scenario-button
+                        name: 🎉 Fête
+                        icon: mdi:party-popper
+                        tap_action:
+                          action: call-service
+                          service: script.scenario_fete
+                          confirmation:
+                            text: Lancer le mode fête ?
     badges: []
+
+  - title: RDC
+    path: rdc
+    icon: mdi:home-floor-0
+    cards:
+      - type: markdown
+        content: "## Rez de Chaussée\nContenu à compléter."
+
+  - title: R+1
+    path: etage1
+    icon: mdi:home-floor-1
+    cards:
+      - type: markdown
+        content: "## Premier étage\nContenu à compléter."
+
+  - title: R+2
+    path: etage2
+    icon: mdi:home-floor-2
+    cards:
+      - type: markdown
+        content: "## Deuxième étage\nContenu à compléter."
+
+  - title: Volets
+    path: volets
+    icon: mdi:window-shutter
+    cards:
+      - type: entities
+        title: Gestion des volets
+        entities:
+          - cover.tous_les_volets
+          - cover.volets_chambres_2
+          - cover.volets_rdc_2
+
+  - title: Température
+    path: temperature
+    icon: mdi:thermometer
+    cards:
+      - type: grid
+        columns: 2
+        cards:
+          - type: thermostat
+            entity: climate.rez_de_chaussee
+          - type: thermostat
+            entity: climate.chambres
+
+  - title: Électroménager
+    path: electromenager
+    icon: mdi:washing-machine
+    cards:
+      - type: entities
+        title: Appareils
+        entities:
+          - switch.lave_vaisselle_etat
+          - sensor.lave_vaisselle_etat
+          - switch.table_de_cuisson_etat
+          - sensor.table_de_cuisson_etat
+
+  - title: Extérieur
+    path: exterieur
+    icon: mdi:pine-tree
+    cards:
+      - type: weather-forecast
+        entity: weather.forecast_maison
