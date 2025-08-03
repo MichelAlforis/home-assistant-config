@@ -45,7 +45,7 @@ lovelace:
       type: module
     - url: /hacsfiles/lovelace-card-mod/card-mod.js
       type: module
-    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+    - url: /hacsfiles/stack-in-card/stack-in-card.js
       type: module
   dashboards:
     ipad-dashboard:
