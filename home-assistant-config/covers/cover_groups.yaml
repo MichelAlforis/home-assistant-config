@@ -1,19 +1,42 @@
 - platform: group
-  name: "cover_volets_tous"
+  name: Tous les volets
+  unique_id: cover_volets_tous
   entities:
-    - cover.volet_salon
-    - cover.volet_cuisine
-    - cover.volet_chambre1
-    - cover.volet_chambre2
+    - cover.fenetre_adele_arriere
+    - cover.fenetre_adele_ru
+    - cover.fenetre_alex_jar
+    - cover.fenetre_alex_rue
+    - cover.fenetre_bureau
+    - cover.fenetre_cuisine
+    - cover.fenetre_cuisine_avant
+    - cover.fenetre_entree
+    - cover.fenetre_salon_central
+    - cover.fenetre_salon_dr
+    - cover.fenetre_salon_gauche
+    - cover.fenetre_salon_tv
+    - cover.fenetre_sdb_suite
+    - cover.fenetre_suite
 
 - platform: group
-  name: "cover_volets_rdc"
+  name: Volets RDC
+  unique_id: cover_volets_rdc
   entities:
-    - cover.volet_salon
-    - cover.volet_cuisine
+    - cover.fenetre_cuisine
+    - cover.fenetre_cuisine_avant
+    - cover.fenetre_entree
+    - cover.fenetre_salon_central
+    - cover.fenetre_salon_dr
+    - cover.fenetre_salon_gauche
+    - cover.fenetre_salon_tv
 
 - platform: group
-  name: "cover_volets_chambres"
+  name: Volets Chambres
+  unique_id: cover_volets_chambres
   entities:
-    - cover.volet_chambre1
-    - cover.volet_chambre2
+    - cover.fenetre_adele_arriere
+    - cover.fenetre_adele_ru
+    - cover.fenetre_alex_jar
+    - cover.fenetre_alex_rue
+    - cover.fenetre_bureau
+    - cover.fenetre_sdb_suite
+    - cover.fenetre_suite

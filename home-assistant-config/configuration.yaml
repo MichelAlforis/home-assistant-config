@@ -21,10 +21,10 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 
 # Covers
-cover:
-  - !include covers/cover_groups.yaml
-  - platform: template
-    covers: !include templates/cover_templates.yaml
+cover: !include_dir_merge_list covers
+
+# Template sensors
+template: !include templates/climate_sensors.yaml
 
 # Groupe spécifique à l'iPad
 group:
