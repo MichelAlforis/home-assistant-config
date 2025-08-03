@@ -26,10 +26,6 @@ cover:
   - platform: template
     covers: !include templates/cover_templates.yaml
 
-# Capteurs
-template:
-  - !include templates/sensor_pac.yaml
-
 # Groupe spécifique à l'iPad
 group:
   ipad_dashboard:

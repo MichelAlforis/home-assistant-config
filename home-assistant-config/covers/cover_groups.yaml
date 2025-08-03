@@ -1,4 +1,19 @@
 - platform: group
-  name: "All Covers"
+  name: "cover_volets_tous"
   entities:
-    - cover.example_cover
+    - cover.volet_salon
+    - cover.volet_cuisine
+    - cover.volet_chambre1
+    - cover.volet_chambre2
+
+- platform: group
+  name: "cover_volets_rdc"
+  entities:
+    - cover.volet_salon
+    - cover.volet_cuisine
+
+- platform: group
+  name: "cover_volets_chambres"
+  entities:
+    - cover.volet_chambre1
+    - cover.volet_chambre2

@@ -1,10 +1,50 @@
-example_cover:
-  friendly_name: "Example Cover"
+- name: "Volets (Tous)"
+  unique_id: "template_volets_tous"
+  device_class: shutter
+  state: "{{ is_state('cover.cover_volets_tous', 'open') }}"
   open_cover:
-    service: switch.turn_on
-    target:
-      entity_id: switch.example_cover
+    - service: cover.open_cover
+      target:
+        entity_id: cover.cover_volets_tous
   close_cover:
-    service: switch.turn_off
-    target:
-      entity_id: switch.example_cover
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cover_volets_tous
+  stop_cover:
+    - service: cover.stop_cover
+      target:
+        entity_id: cover.cover_volets_tous
+
+- name: "Volets (RDC)"
+  unique_id: "template_volets_rdc"
+  device_class: shutter
+  state: "{{ is_state('cover.cover_volets_rdc', 'open') }}"
+  open_cover:
+    - service: cover.open_cover
+      target:
+        entity_id: cover.cover_volets_rdc
+  close_cover:
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cover_volets_rdc
+  stop_cover:
+    - service: cover.stop_cover
+      target:
+        entity_id: cover.cover_volets_rdc
+
+- name: "Volets (Chambres)"
+  unique_id: "template_volets_chambres"
+  device_class: shutter
+  state: "{{ is_state('cover.cover_volets_chambres', 'open') }}"
+  open_cover:
+    - service: cover.open_cover
+      target:
+        entity_id: cover.cover_volets_chambres
+  close_cover:
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cover_volets_chambres
+  stop_cover:
+    - service: cover.stop_cover
+      target:
+        entity_id: cover.cover_volets_chambres
