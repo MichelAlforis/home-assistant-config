@@ -1,3 +1,72 @@
+resources:
+  - url: /hacsfiles/lovelace-card-mod/card-mod.js
+    type: module
+  - url: /hacsfiles/lovelace-layout-card/layout-card.js
+    type: module
+  - url: /hacsfiles/button-card/button-card.js
+    type: module
+  - url: /hacsfiles/stack-in-card/stack-in-card.js
+    type: module
+button_card_templates:
+  scenario-button:
+    show_name: true
+    show_state: false
+    show_icon: true
+    styles:
+      card:
+        - border-radius: 12px
+        - padding: 12px
+        - color: white
+        - text-shadow: 0px 0px 5px black
+      name:
+        - font-size: 14px
+        - font-weight: bold
+      icon:
+        - width: 30px
+        - height: 30px
+  climate-button:
+    show_name: true
+    show_state: true
+    styles:
+      card:
+        - border-radius: 12px
+        - padding: 12px
+        - background-color: "rgba(var(--rgb-primary-color), 0.1)"
+        - color: var(--primary-text-color)
+      name:
+        - font-size: 14px
+        - font-weight: bold
+      state:
+        - font-size: 12px
+  materiel-button:
+    show_name: true
+    show_icon: true
+    styles:
+      card:
+        - border-radius: 12px
+        - padding: 12px
+        - background-color: "rgba(var(--rgb-secondary-color), 0.1)"
+        - color: var(--secondary-text-color)
+      name:
+        - font-size: 14px
+        - font-weight: bold
+      icon:
+        - width: 30px
+        - height: 30px
+  nav-button:
+    show_name: true
+    show_icon: true
+    styles:
+      card:
+        - background-color: 'rgba(11, 128, 207, 0.2)'
+        - border-radius: '12px'
+        - padding: '12px'
+      name:
+        - font-size: '14px'
+        - font-weight: 'bold'
+      icon:
+        - width: '30px'
+        - height: '30px'
 views:
   - title: Accueil
     path: accueil
@@ -30,11 +99,23 @@ views:
                   card_mod:
                     class: transparent-card welcome-card
                 - type: custom:button-card
-                  template: control-card
                   icon: mdi:cog
+                  size: 40px
+                  show_name: false
                   tap_action:
                     action: navigate
                     navigation_path: /config/dashboard
+                  styles:
+                    card:
+                      - background: rgba(var(--rgb-primary-color),0.1)
+                      - border-radius: 12px
+                      - width: 40px
+                      - height: 40px
+                      - margin-left: 12px
+                    icon:
+                      - color: var(--primary-color)
+                      - width: 20px
+                      - height: 20px
           - type: horizontal-stack
             cards:
               - type: custom:button-card
@@ -68,6 +149,12 @@ views:
                   service: script.scenario_coucher
                   confirmation:
                     text: Lancer le scénario coucher ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(63, 81, 181, 0.9),
+                        rgba(103, 58, 183, 0.8))
+                    - border: 2px solid rgba(63, 81, 181, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🏠 Absent"
@@ -77,6 +164,12 @@ views:
                   service: script.scenario_absent
                   confirmation:
                     text: Activer le mode absent ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(244, 67, 54, 0.9),
+                        rgba(233, 30, 99, 0.8))
+                    - border: 2px solid rgba(244, 67, 54, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🎉 Fête"
@@ -86,6 +179,11 @@ views:
                   service: script.scenario_fete
                   confirmation:
                     text: Lancer le mode fête ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8))
+                    - border: 2px solid rgba(156, 39, 176, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🎥 Soirée Film"
@@ -95,6 +193,11 @@ views:
                   service: script.scenario_soiree_film
                   confirmation:
                     text: Lancer le scénario soirée film ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8))
+                    - border: 2px solid rgba(0, 150, 136, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🌌 Nuit"
@@ -104,8 +207,12 @@ views:
                   service: script.scenario_nuit
                   confirmation:
                     text: Lancer le scénario nuit ?
+                styles:
+                  card:
+                    - background: >-
+                        linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8))
+                    - border: 2px solid rgba(33, 33, 33, 0.8)
     badges: []
-
   - title: Pièces
     path: pieces
     icon: mdi:floor-plan
@@ -122,42 +229,42 @@ views:
         square: false
         cards:
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "👧 Adèle"
             entity: climate.adele
             tap_action:
               action: navigate
               navigation_path: /lovelace/adele
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "👦 Alex"
             entity: climate.alex
             tap_action:
               action: navigate
               navigation_path: /lovelace/alex
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "💼 Bureau"
             entity: climate.bureau
             tap_action:
               action: navigate
               navigation_path: /lovelace/bureau
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "🍳 Cuisine"
             entity: climate.cuisine
             tap_action:
               action: navigate
               navigation_path: /lovelace/cuisine
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "📺 Entrée & TV"
             entity: climate.entree_tv
             tap_action:
               action: navigate
               navigation_path: /lovelace/entree_tv
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "🛏️ Parents"
             entity: climate.parents
             tap_action:
@@ -240,11 +347,11 @@ views:
         square: false
         cards:
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "🍳 Cuisine"
             entity: climate.cuisine
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "📺 Entrée & TV"
             entity: climate.entree_tv
       - type: entities
@@ -269,19 +376,19 @@ views:
         square: false
         cards:
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "👧 Adèle"
             entity: climate.adele
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "👦 Alex"
             entity: climate.alex
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "💼 Bureau"
             entity: climate.bureau
           - type: custom:button-card
-            template: piece-button
+            template: climate-button
             name: "🛏️ Parents"
             entity: climate.parents
       - type: entities
@@ -302,7 +409,7 @@ views:
       attachment: fixed
     cards:
       - type: custom:button-card
-        template: piece-button
+        template: climate-button
         name: "Chambres"
         entity: climate.chambres
     badges: []
@@ -458,8 +565,6 @@ views:
         template: climate-button
         name: "Climat Adèle"
         entity: climate.adele
-        variables:
-          climate_entity: climate.adele
       - type: entities
         title: "Volets"
         entities:
@@ -488,8 +593,6 @@ views:
         template: climate-button
         name: "Climat Alex"
         entity: climate.alex
-        variables:
-          climate_entity: climate.alex
       - type: entities
         title: "Volets"
         entities:
@@ -518,8 +621,6 @@ views:
         template: climate-button
         name: "Climat Bureau"
         entity: climate.bureau
-        variables:
-          climate_entity: climate.bureau
       - type: entities
         title: "Volets"
         entities:
@@ -547,8 +648,6 @@ views:
         template: climate-button
         name: "Climat Cuisine"
         entity: climate.cuisine
-        variables:
-          climate_entity: climate.cuisine
       - type: entities
         title: "Volets"
         entities:
@@ -577,8 +676,6 @@ views:
         template: climate-button
         name: "Climat Entrée & TV"
         entity: climate.entree_tv
-        variables:
-          climate_entity: climate.entree_tv
       - type: entities
         title: "Volets"
         entities:
@@ -610,8 +707,6 @@ views:
         template: climate-button
         name: "Climat Parents"
         entity: climate.parents
-        variables:
-          climate_entity: climate.parents
       - type: entities
         title: "Volets"
         entities:
