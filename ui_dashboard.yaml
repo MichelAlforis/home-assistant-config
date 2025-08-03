@@ -1,5 +1,8 @@
 views:
-  - panel: true
+  - title: Accueil
+    path: accueil
+    icon: mdi:home
+    panel: true
     theme: alforis-tablette
     background:
       image: /local/fond_tablette.webp
@@ -27,23 +30,37 @@ views:
                   card_mod:
                     class: transparent-card welcome-card
                 - type: custom:button-card
+                  template: icon-button
                   icon: mdi:cog
-                  size: 40px
-                  show_name: false
                   tap_action:
                     action: navigate
                     navigation_path: /config/dashboard
                   styles:
                     card:
-                      - background: rgba(var(--rgb-primary-color),0.1)
-                      - border-radius: 12px
-                      - width: 40px
-                      - height: 40px
                       - margin-left: 12px
-                    icon:
-                      - color: var(--primary-color)
-                      - width: 20px
-                      - height: 20px
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                template: nav-button
+                icon: mdi:home
+                name: Accueil
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/accueil
+              - type: custom:button-card
+                template: nav-button
+                icon: mdi:floor-plan
+                name: Pièces
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/pieces
+              - type: custom:button-card
+                template: nav-button
+                icon: mdi:tools
+                name: Matériel
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/materiel
           - type: horizontal-stack
             cards:
               - type: weather-forecast
@@ -54,12 +71,6 @@ views:
                   service: script.scenario_coucher
                   confirmation:
                     text: Lancer le scénario coucher ?
-                styles:
-                  card:
-                    - background: >-
-                        linear-gradient(135deg, rgba(63, 81, 181, 0.9),
-                        rgba(103, 58, 183, 0.8))
-                    - border: 2px solid rgba(63, 81, 181, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🏠 Absent"
@@ -69,12 +80,6 @@ views:
                   service: script.scenario_absent
                   confirmation:
                     text: Activer le mode absent ?
-                styles:
-                  card:
-                    - background: >-
-                        linear-gradient(135deg, rgba(244, 67, 54, 0.9),
-                        rgba(233, 30, 99, 0.8))
-                    - border: 2px solid rgba(244, 67, 54, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🎉 Fête"
@@ -84,11 +89,6 @@ views:
                   service: script.scenario_fete
                   confirmation:
                     text: Lancer le mode fête ?
-                styles:
-                  card:
-                    - background: >-
-                        linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8))
-                    - border: 2px solid rgba(156, 39, 176, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🎥 Soirée Film"
@@ -98,11 +98,6 @@ views:
                   service: script.scenario_soiree_film
                   confirmation:
                     text: Lancer le scénario soirée film ?
-                styles:
-                  card:
-                    - background: >-
-                        linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8))
-                    - border: 2px solid rgba(0, 150, 136, 0.8)
               - type: custom:button-card
                 template: scenario-button
                 name: "🌌 Nuit"
@@ -112,11 +107,6 @@ views:
                   service: script.scenario_nuit
                   confirmation:
                     text: Lancer le scénario nuit ?
-                styles:
-                  card:
-                    - background: >-
-                        linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8))
-                    - border: 2px solid rgba(33, 33, 33, 0.8)
     badges: []
 
   - title: Pièces
@@ -198,29 +188,29 @@ views:
             name: "🪟 Volets"
             icon: mdi:window-shutter
             tap_action:
-              action: more-info
-            entity: cover.volets
+              action: navigate
+              navigation_path: /lovelace/volets
           - type: custom:button-card
             template: materiel-button
             name: "🌡️ Température"
             icon: mdi:thermometer
             tap_action:
-              action: more-info
-            entity: weather.forecast_maison
+              action: navigate
+              navigation_path: /lovelace/temperature
           - type: custom:button-card
             template: materiel-button
             name: "🔌 Électroménager"
             icon: mdi:washing-machine
             tap_action:
-              action: more-info
-            entity: switch.lave_vaisselle_etat
+              action: navigate
+              navigation_path: /lovelace/electromenager
           - type: custom:button-card
             template: materiel-button
             name: "🌿 Extérieur"
             icon: mdi:pine-tree
             tap_action:
-              action: more-info
-            entity: binary_sensor.irrigation_unlimited_c1_m
+              action: navigate
+              navigation_path: /lovelace/exterieur
           - type: custom:button-card
             template: materiel-button
             name: "📶 Réseau"

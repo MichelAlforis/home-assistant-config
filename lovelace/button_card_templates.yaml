@@ -32,6 +32,25 @@ piece-button:
       - min-width: 120px
       - margin: 4px
 
+icon-button:
+  template: base-button
+  show_name: false
+  styles:
+    card:
+      - width: 40px
+      - height: 40px
+      - background: rgba(var(--rgb-primary-color),0.1)
+    icon:
+      - width: 20px
+      - height: 20px
+      - color: var(--primary-color)
+
+nav-button:
+  template: base-button
+  styles:
+    card:
+      - background-color: 'rgba(11, 128, 207, 0.2)'
+
 materiel-button:
   template: base-button
   styles:
