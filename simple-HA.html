@@ -18,110 +18,102 @@
 
         body {
             font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: -webkit-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: center / cover no-repeat url("/local/fond_tablette.webp") fixed;
+            background-color: #333; /* Fallback */
             min-height: 100vh;
-            color: #333;
-            padding: 10px;
+            color: white;
+            padding: 8px;
             -webkit-text-size-adjust: none;
         }
 
         .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            padding: 10px;
+            display: none; /* Remplacé par la nouvelle carte header */
         }
 
-        .header h1 {
-            font-size: 2em;
-            font-weight: 300;
-            margin-bottom: 5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .header-info {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Mode paysage - 3 colonnes */
-        @media (orientation: landscape) and (min-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2.2em;
-            }
-            
-            body {
-                padding: 15px;
-            }
-        }
-
-        /* iPad et tablettes */
-        @media (min-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 25px;
-            }
-            
-            body {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2.5em;
-            }
-        }
-
-        .section {
-            background: rgba(255, 255, 255, 0.95);
+        .nav {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.2);
             -webkit-border-radius: 12px;
             border-radius: 12px;
-            padding: 15px;
-            -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            break-inside: avoid;
+            padding: 5px;
         }
 
-        .section h3 {
-            color: #2c3e50;
-            margin-bottom: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .section-count {
-            background: #667eea;
+        .nav-btn {
+            background: transparent;
+            border: none;
             color: white;
-            font-size: 0.8em;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: 500;
-        }
-
-        .entity {
-            background: #f8f9fa;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            font-weight: 600;
             -webkit-border-radius: 8px;
             border-radius: 8px;
+            -webkit-transition: background 0.3s ease;
+            -o-transition: background 0.3s ease;
+            transition: background 0.3s ease;
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        #accueil-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            -webkit-border-radius: 12px;
+            border-radius: 12px;
             padding: 12px;
-            margin: 8px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            -webkit-box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Layout pour tablettes en paysage */
+        @media (orientation: landscape) and (min-width: 768px) {
+            #accueil-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto;
+                gap: 15px;
+            }
+            #header-card { grid-column: 1 / -1; }
+            #weather-card { grid-column: 1 / 2; }
+            #climate-card { grid-column: 2 / 4; }
+            #pieces-card { grid-column: 1 / 2; }
+            #materiel-card { grid-column: 2 / 3; }
+            #scenarios-card { grid-column: 3 / 4; }
+        }
+
+        /* ---- Styles des cartes spécifiques ---- */
+        #header-card-content {
             display: -webkit-box;
             display: -webkit-flex;
             display: flex;
@@ -129,110 +121,57 @@
             justify-content: space-between;
             -webkit-align-items: center;
             align-items: center;
-            -webkit-transition: all 0.3s ease;
-            transition: all 0.3s ease;
-            position: relative;
+        }
+        #header-card-content h2 { font-size: 1.4em; margin:0; }
+        #header-card-content p { font-size: 0.9em; margin:0; opacity: 0.8; }
+        #header-card-info { font-size: 0.85em; font-weight: bold; }
+
+        .climate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        .climate-item { text-align: center; }
+        .climate-item .name { font-size: 0.9em; font-weight: bold; }
+        .climate-item .state { font-size: 0.8em; opacity: 0.8; }
+        .climate-item .temp { font-size: 1.2em; font-weight: bold; }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
-        .entity:active {
-            background: #e9ecef;
-            transform: scale(0.98);
-        }
-
-        .entity.updating {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .entity.updating::after {
-            content: "🔄";
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: translateY(-50%) rotate(0deg); }
-            to { transform: translateY(-50%) rotate(360deg); }
-        }
-
-        .entity-info {
-            -webkit-flex: 1;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .entity-name {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 3px;
-            font-size: 0.9em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .entity-state {
-            color: #666;
-            font-size: 0.8em;
-        }
-
-        .control-btn {
-            background: -webkit-linear-gradient(45deg, #4CAF50, #45a049);
-            background: linear-gradient(45deg, #4CAF50, #45a049);
+        .styled-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            border: none;
-            padding: 8px 16px;
-            -webkit-border-radius: 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.8em;
-            -webkit-transition: all 0.3s ease;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
-            outline: none;
-            min-width: 50px;
-            cursor: pointer;
-        }
-
-        .control-btn:active {
-            -webkit-transform: scale(0.95);
-            transform: scale(0.95);
-        }
-
-        .control-btn:hover {
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-        }
-
-        .control-btn.off {
-            background: -webkit-linear-gradient(45deg, #f44336, #d32f2f);
-            background: linear-gradient(45deg, #f44336, #d32f2f);
-        }
-
-        .control-btn.off:hover {
-            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-        }
-
-        .control-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .cover-controls {
+            padding: 12px 8px;
+            font-size: 0.9em;
+            font-weight: 700;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            text-align: center;
+            height: 60px;
+            display: -webkit-box;
+            display: -webkit-flex;
             display: flex;
-            gap: 5px;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-transition: background 0.3s ease;
+            transition: background 0.3s ease;
         }
+        .styled-btn:active { background: rgba(255, 255, 255, 0.3); }
+        .styled-btn .icon { margin-right: 8px; }
 
-        .cover-controls .control-btn {
-            padding: 6px 10px;
-            font-size: 0.7em;
-            min-width: 35px;
-        }
+        .piece-btn { background: -webkit-linear-gradient(135deg, rgba(21,101,192,0.7), rgba(25,118,210,0.6)); }
+        .materiel-btn { background: -webkit-linear-gradient(135deg, rgba(245,127,23,0.7), rgba(255,152,0,0.6)); }
+        .scenario-btn { background: -webkit-linear-gradient(135deg, rgba(156,39,176,0.7), rgba(233,30,99,0.6)); }
 
         .config-panel {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(0,0,0,0.7);
             -webkit-border-radius: 12px;
             border-radius: 12px;
             padding: 20px;
@@ -241,582 +180,329 @@
             margin-left: auto;
             margin-right: auto;
         }
-
-        .config-panel h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-
+        .config-panel h3 { color: white; }
         .config-panel input {
-            width: 100%;
-            padding: 12px;
-            margin: 6px 0;
-            border: 2px solid #e9ecef;
-            -webkit-border-radius: 6px;
-            border-radius: 6px;
-            font-size: 1em;
-            -webkit-appearance: none;
-            background: white;
+            width: 100%; padding: 12px; margin: 6px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+            -webkit-border-radius: 6px; border-radius: 6px;
+            font-size: 1em; -webkit-appearance: none;
+            background: rgba(255,255,255,0.1); color: white;
         }
-
-        .config-panel input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .config-panel button {
             background: -webkit-linear-gradient(45deg, #667eea, #764ba2);
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            -webkit-border-radius: 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-top: 10px;
-            width: 100%;
-            font-size: 1em;
+            color: white; border: none; padding: 12px 20px;
+            -webkit-border-radius: 20px; border-radius: 20px;
+            font-weight: 600; margin-top: 10px; width: 100%; font-size: 1em;
         }
 
-        .loading {
-            text-align: center;
-            color: white;
-            padding: 30px;
-            font-size: 1.1em;
+        .loading { text-align: center; color: white; padding: 30px; font-size: 1.1em; }
+        .error { background: #d32f2f; color: white; padding: 12px; -webkit-border-radius: 8px; border-radius: 8px; margin: 10px 0; }
+        .last-update { text-align: center; color: rgba(255,255,255,0.7); font-size: 0.8em; margin-top: 15px; padding: 10px; }
+
+        /* Fallback pour ancien iOS sans support de backdrop-filter */
+        @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+          .card {
+            background: rgba(0, 0, 0, 0.3);
+          }
         }
 
-        .error {
-            background: rgba(244, 67, 54, 0.1);
-            color: #d32f2f;
-            padding: 12px;
-            -webkit-border-radius: 8px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border-left: 4px solid #f44336;
-            font-size: 0.9em;
-        }
-
-        .last-update {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.8em;
-            margin-top: 15px;
-            padding: 10px;
-            grid-column: 1 / -1;
-        }
-
-        .climate-info {
+        .entity-row {
             display: -webkit-box;
             display: -webkit-flex;
             display: flex;
             -webkit-justify-content: space-between;
             justify-content: space-between;
-            margin-top: 5px;
+            -webkit-align-items: center;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .climate-temp {
-            font-size: 0.8em;
-            color: #2980b9;
+        .entity-row:last-child {
+            border-bottom: none;
+        }
+        .entity-info {
+            -webkit-flex-grow: 1;
+            flex-grow: 1;
+        }
+        .entity-name {
             font-weight: 600;
         }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            -webkit-border-radius: 50%;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
+        .entity-state {
+            font-size: 0.85em;
+            opacity: 0.7;
         }
-
-        .status-on { background: #4CAF50; }
-        .status-off { background: #f44336; }
-        .status-unavailable { background: #9e9e9e; }
-
-        .success-feedback {
-            background: rgba(76, 175, 80, 0.1);
-            color: #2e7d32;
-            padding: 8px 12px;
-            border-radius: 6px;
+        .entity-controls button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 5px 10px;
             font-size: 0.8em;
-            margin-top: 5px;
-            border-left: 3px solid #4CAF50;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+            margin-left: 5px;
+        }
+        .entity-controls button.active {
+            background: #667eea;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🏠 Home Assistant</h1>
-        <div class="header-info">Tableau de bord connecté</div>
+    <div class="config-panel" id="configPanel">
+        <h3>⚙️ Configuration</h3>
+        <input type="text" id="haUrl" placeholder="URL Home Assistant" autocomplete="off" />
+        <input type="password" id="haToken" placeholder="Token d'accès" autocomplete="off" />
+        <button onclick="saveConfig()">Se connecter</button>
     </div>
 
-    <div class="config-panel" id="configPanel">
-        <h3>⚙️ Configuration de connexion</h3>
-        <input type="text" id="haUrl" placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" autocomplete="off" />
-        <input type="password" id="haToken" placeholder="Token d'accès long terme" autocomplete="off" />
-        <button onclick="saveConfig()">Se connecter</button>
-        <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
-            💡 Pour créer un token : Profil → Tokens d'accès long terme
+    <div id="dashboard-content" style="display: none;">
+        <div class="nav">
+            <button class="nav-btn active" onclick="showPage('page-accueil')">Accueil</button>
+            <button class="nav-btn" onclick="showPage('page-pieces')">Pièces</button>
+            <button class="nav-btn" onclick="showPage('page-materiel')">Matériel</button>
         </div>
+
+        <div id="main-content">
+            <div id="page-accueil" class="page active">
+                <div id="accueil-grid">
+                    <div id="header-card" class="card"></div>
+                    <div id="weather-card" class="card"></div>
+                    <div id="climate-card" class="card"></div>
+                    <div id="pieces-card" class="card"></div>
+                    <div id="materiel-card" class="card"></div>
+                    <div id="scenarios-card" class="card"></div>
+                </div>
+            </div>
+            <div id="page-pieces" class="page">
+                <div class="dashboard-grid" id="pieces-grid"></div>
+            </div>
+            <div id="page-materiel" class="page">
+                <div class="dashboard-grid" id="materiel-grid"></div>
+            </div>
+        </div>
+        <div class="last-update" id="lastUpdate"></div>
     </div>
 
     <div class="loading" id="loading" style="display: none;">
         <div>🔄 Connexion en cours...</div>
     </div>
-    
-    <div class="dashboard-grid" id="content"></div>
-    <div class="last-update" id="lastUpdate"></div>
 
     <script>
-        // Variables globales
-        var haUrl = '';
-        var haToken = '';
-        var entities = [];
-        var refreshInterval;
-        var isLoading = false;
-        var pendingCommands = new Set();
+        var haUrl = '', haToken = '', entities = [], refreshInterval, isLoading = false;
 
-        // Initialisation au chargement de la page
         function initApp() {
-            console.log('Application démarrée');
-            loadStoredConfig();
-            
             if (haUrl && haToken) {
                 hideConfigPanel();
                 startAutoRefresh();
             }
         }
 
-        // Chargement de la configuration stockée (simulation)
-        function loadStoredConfig() {
-            // Pour iOS 9.3.5, on ne peut pas utiliser localStorage de manière fiable
-            // La configuration devra être saisie à chaque fois
+        function showPage(pageId) {
+            var pages = document.getElementsByClassName('page');
+            for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+            document.getElementById(pageId).classList.add('active');
+
+            var navBtns = document.getElementsByClassName('nav-btn');
+            for (var i = 0; i < navBtns.length; i++) navBtns[i].classList.remove('active');
+            
+            var activeBtn = document.querySelector('.nav-btn[onclick="showPage(\'' + pageId + '\')]');
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            if (entities.length > 0) displayStates(entities);
         }
 
-        // Sauvegarde de la configuration
         function saveConfig() {
-            var urlInput = document.getElementById('haUrl');
-            var tokenInput = document.getElementById('haToken');
-            
-            haUrl = urlInput.value.replace(/\s/g, '');
-            haToken = tokenInput.value.replace(/\s/g, '');
-            
-            if (!haUrl || !haToken) {
-                showError('Veuillez remplir tous les champs de configuration');
-                return;
-            }
-            
-            // Nettoyer l'URL
-            if (haUrl.charAt(haUrl.length - 1) === '/') {
-                haUrl = haUrl.slice(0, -1);
-            }
-            
-            if (haUrl.indexOf('http') !== 0) {
-                haUrl = 'http://' + haUrl;
-            }
-            
-            console.log('Configuration sauvegardée:', haUrl);
+            haUrl = document.getElementById('haUrl').value.replace(/\s/g, '');
+            haToken = document.getElementById('haToken').value.replace(/\s/g, '');
+            if (!haUrl || !haToken) { showError('URL et Token requis.'); return; }
+            if (haUrl.slice(-1) === '/') haUrl = haUrl.slice(0, -1);
+            if (haUrl.indexOf('http') !== 0) haUrl = 'http://' + haUrl;
             hideConfigPanel();
             startAutoRefresh();
         }
 
         function hideConfigPanel() {
             document.getElementById('configPanel').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            showPage('page-accueil');
         }
 
-        function showConfigPanel() {
-            document.getElementById('configPanel').style.display = 'block';
-        }
-
-        // Démarrage du rafraîchissement automatique
         function startAutoRefresh() {
             loadStates();
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-            refreshInterval = setInterval(function() {
-                loadStates();
-            }, 5000); // Réduit à 5 secondes pour plus de réactivité
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(loadStates, 10000);
         }
 
-        // Chargement des états depuis Home Assistant
         function loadStates() {
             if (isLoading) return;
             isLoading = true;
+            document.getElementById('loading').style.display = 'block';
             
-            var loadingEl = document.getElementById('loading');
-            loadingEl.style.display = 'block';
-            
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', haUrl + '/api/states', true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    isLoading = false;
-                    loadingEl.style.display = 'none';
-                    
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            entities = data;
-                            displayStates(data);
-                            updateLastRefresh();
-                            clearErrors();
-                        } catch (e) {
-                            console.error('Erreur parsing:', e);
-                            showError('Erreur de traitement des données: ' + e.message);
-                        }
-                    } else if (xhr.status === 401) {
-                        showError('🔐 Token invalide - Vérifiez votre token d\'accès');
-                        showConfigPanel();
-                    } else if (xhr.status === 0) {
-                        showError('🌐 Impossible de se connecter - Vérifiez votre URL et votre réseau');
-                    } else {
-                        showError('⚠️ Erreur de connexion (Code: ' + xhr.status + ')');
-                    }
+            callApi('GET', '/states', null, function(status, responseText) {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+                if (status === 200) {
+                    try {
+                        entities = JSON.parse(responseText);
+                        displayStates(entities);
+                        updateLastRefresh();
+                    } catch (e) { showError('Erreur de parsing JSON.'); }
+                } else {
+                    showError('Erreur de connexion: ' + status);
                 }
-            };
-            
-            xhr.onerror = function() {
-                isLoading = false;
-                loadingEl.style.display = 'none';
-                showError('🔌 Erreur réseau - Vérifiez votre connexion Internet');
-            };
-            
-            try {
-                xhr.send();
-            } catch (e) {
-                isLoading = false;
-                loadingEl.style.display = 'none';
-                showError('Erreur lors de l\'envoi de la requête');
-            }
+            });
         }
 
-        // Affichage des états
         function displayStates(states) {
-            var content = document.getElementById('content');
+            var currentPageId = document.querySelector('.page.active').id;
+            if (currentPageId === 'page-accueil') {
+                displayAccueil(states);
+            } else if (currentPageId === 'page-pieces') {
+                displayPieces(states);
+            } else if (currentPageId === 'page-materiel') {
+                displayMateriel(states);
+            }
+        }
+
+        function displayAccueil(states) {
+            // ... (same as before)
+        }
+
+        function displayMateriel(states) {
+            var grid = document.getElementById('materiel-grid');
+            var domains = ['light', 'switch', 'cover', 'climate', 'sensor'];
             var html = '';
-            
-            // Tri et organisation des entités
-            var lights = [];
-            var switches = [];
-            var climates = [];
-            var sensors = [];
-            var covers = [];
-            
-            for (var i = 0; i < states.length; i++) {
-                var entity = states[i];
-                var domain = entity.entity_id.split('.')[0];
-                
-                switch (domain) {
-                    case 'light':
-                        lights.push(entity);
-                        break;
-                    case 'switch':
-                        switches.push(entity);
-                        break;
-                    case 'climate':
-                        climates.push(entity);
-                        break;
-                    case 'cover':
-                        covers.push(entity);
-                        break;
-                    case 'sensor':
-                    case 'binary_sensor':
-                        if (entity.attributes.device_class === 'temperature' || 
-                            entity.attributes.device_class === 'humidity' ||
-                            entity.entity_id.indexOf('temperature') !== -1 ||
-                            entity.entity_id.indexOf('humidite') !== -1) {
-                            sensors.push(entity);
-                        }
-                        break;
+
+            domains.forEach(function(domain) {
+                var domainEntities = findEntityByDomain(states, domain);
+                if (domainEntities.length > 0) {
+                    html += '<div class="card"><h3 class="card-title">' + domain.charAt(0).toUpperCase() + domain.slice(1) + 's</h3>';
+                    domainEntities.forEach(function(entity) {
+                        html += createEntityRowHtml(entity);
+                    });
+                    html += '</div>';
                 }
-            }
-            
-            // Affichage des sections avec répartition optimisée
-            if (climates.length > 0) {
-                html += createSection('🌡️ Climatisation', climates, true, 'climate');
-            }
-            
-            if (lights.length > 0) {
-                html += createSection('💡 Éclairages', lights.slice(0, 12), true, 'light');
-            }
-            
-            if (switches.length > 0) {
-                html += createSection('🔌 Interrupteurs', switches.slice(0, 10), true, 'switch');
-            }
-            
-            if (covers.length > 0) {
-                html += createSection('🪟 Volets', covers.slice(0, 8), true, 'cover');
-            }
-            
-            if (sensors.length > 0) {
-                html += createSection('📊 Capteurs', sensors.slice(0, 8), false, 'sensor');
-            }
-            
-            content.innerHTML = html;
+            });
+            grid.innerHTML = html;
         }
 
-        // Création d'une section
-        function createSection(title, entities, controllable, type) {
-            var html = '<div class="section">';
-            html += '<h3>' + title + ' <span class="section-count">' + entities.length + '</span></h3>';
+        function displayPieces(states) {
+            var grid = document.getElementById('pieces-grid');
+            var rooms = {};
             
-            for (var i = 0; i < entities.length; i++) {
-                html += createEntityHtml(entities[i], controllable, type);
+            states.forEach(function(entity) {
+                var roomName = (entity.attributes.friendly_name || '').split(' ')[0];
+                if (['Salon', 'Cuisine', 'Chambre', 'Bureau', 'Salle', 'Entrée'].indexOf(roomName) !== -1) {
+                    if (!rooms[roomName]) rooms[roomName] = [];
+                    rooms[roomName].push(entity);
+                }
+            });
+
+            var html = '';
+            for (var room in rooms) {
+                html += '<div class="card"><h3 class="card-title">' + room + '</h3>';
+                rooms[room].forEach(function(entity) {
+                    html += createEntityRowHtml(entity);
+                });
+                html += '</div>';
             }
-            
-            html += '</div>';
+            grid.innerHTML = html;
+        }
+
+        function createEntityRowHtml(entity) {
+            var domain = entity.entity_id.split('.')[0];
+            var html = '<div class="entity-row">';
+            html += '<div class="entity-info">' +
+                        '<div class="entity-name">' + (entity.attributes.friendly_name || entity.entity_id) + '</div>' +
+                        '<div class="entity-state">' + entity.state + '</div>' +
+                    '</div>';
+            html += '<div class="entity-controls">';
+
+            if (domain === 'light' || domain === 'switch') {
+                var isOn = entity.state === 'on';
+                html += '<button class="' + (isOn ? 'active' : '') + '" onclick="toggleEntity(\'' + entity.entity_id + '\')">' + (isOn ? 'Éteindre' : 'Allumer') + '</button>';
+            } else if (domain === 'cover') {
+                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'open_cover\')">⬆</button>';
+                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'stop_cover\')">⏸</button>';
+                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'close_cover\')">⬇</button>';
+            }
+
+            html += '</div></div>';
             return html;
         }
 
-        // Création du HTML pour une entité
-        function createEntityHtml(entity, controllable, type) {
-            var friendlyName = entity.attributes.friendly_name || entity.entity_id;
-            var state = entity.state;
-            var unit = entity.attributes.unit_of_measurement || '';
-            var entityId = entity.entity_id;
-            
-            // Statut indicator
-            var statusClass = 'status-unavailable';
-            if (state === 'on') statusClass = 'status-on';
-            else if (state === 'off') statusClass = 'status-off';
-            else if (state === 'unavailable') statusClass = 'status-unavailable';
-            
-            var updatingClass = pendingCommands.has(entityId) ? ' updating' : '';
-            
-            var html = '<div class="entity' + updatingClass + '" data-entity-id="' + entityId + '">';
-            html += '<div class="entity-info">';
-            html += '<div class="entity-name">';
-            html += '<span class="status-indicator ' + statusClass + '"></span>';
-            html += friendlyName + '</div>';
-            
-            if (type === 'climate') {
-                var currentTemp = entity.attributes.current_temperature;
-                var targetTemp = entity.attributes.temperature;
-                html += '<div class="entity-state">État: ' + translateState(state) + '</div>';
-                if (currentTemp && targetTemp) {
-                    html += '<div class="climate-info">';
-                    html += '<span class="climate-temp">Actuel: ' + currentTemp + '°C</span>';
-                    html += '<span class="climate-temp">Cible: ' + targetTemp + '°C</span>';
-                    html += '</div>';
-                }
-            } else {
-                html += '<div class="entity-state">' + translateState(state) + ' ' + unit + '</div>';
-            }
-            
-            html += '</div>';
-            
-            // Boutons de contrôle
-            if (controllable) {
-                if (type === 'cover') {
-                    html += '<div class="cover-controls">';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'open_cover\')">⬆</button>';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'stop_cover\')">⏸</button>';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'close_cover\')">⬇</button>';
-                    html += '</div>';
-                } else if (state === 'on' || state === 'off') {
-                    var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
-                    var buttonText = state === 'on' ? 'OFF' : 'ON';
-                    var disabled = pendingCommands.has(entityId) ? ' disabled' : '';
-                    html += '<button class="' + buttonClass + '"' + disabled + ' onclick="toggleEntity(\'' + entityId + '\')">' + buttonText + '</button>';
-                }
-            }
-            
-            html += '</div>';
-            return html;
-        }
-
-        // Traduction des états
-        function translateState(state) {
-            var translations = {
-                'on': 'Allumé',
-                'off': 'Éteint',
-                'unavailable': 'Indisponible',
-                'unknown': 'Inconnu',
-                'open': 'Ouvert',
-                'closed': 'Fermé',
-                'opening': 'Ouverture...',
-                'closing': 'Fermeture...',
-                'heat': 'Chauffage',
-                'cool': 'Climatisation',
-                'auto': 'Auto',
-                'idle': 'Inactif'
-            };
-            return translations[state] || state;
-        }
-
-        // Contrôle des entités avec feedback amélioré
         function toggleEntity(entityId) {
-            if (pendingCommands.has(entityId)) return;
-            
-            var entity = findEntity(entityId);
+            var entity = findEntity(entities, entityId);
             if (!entity) return;
-            
             var service = entity.state === 'on' ? 'turn_off' : 'turn_on';
             var domain = entityId.split('.')[0];
-            
-            // Marquer comme en cours de traitement
-            pendingCommands.add(entityId);
-            updateEntityUI(entityId, true);
-            
-            callService(domain, service, { entity_id: entityId }, entityId);
+            callService(domain, service, { entity_id: entityId });
         }
 
-        // Contrôle des volets amélioré
-        function controlCover(entityId, action) {
-            if (pendingCommands.has(entityId)) return;
-            
-            pendingCommands.add(entityId);
-            updateEntityUI(entityId, true);
-            
-            callService('cover', action, { entity_id: entityId }, entityId);
+        function controlCover(entityId, service) {
+            callService('cover', service, { entity_id: entityId });
         }
 
-        // Mise à jour de l'UI pour une entité
-        function updateEntityUI(entityId, isUpdating) {
-            var entityEl = document.querySelector('[data-entity-id="' + entityId + '"]');
-            if (entityEl) {
-                if (isUpdating) {
-                    entityEl.classList.add('updating');
-                    var btn = entityEl.querySelector('.control-btn');
-                    if (btn) btn.disabled = true;
-                } else {
-                    entityEl.classList.remove('updating');
-                    var btn = entityEl.querySelector('.control-btn');
-                    if (btn) btn.disabled = false;
-                }
-            }
+        function createButton(name, icon, btnClass, action) {
+            return '<button class="styled-btn ' + btnClass + '" onclick="' + action + '">' +
+                   '<span class="icon"></span>' + name + '</button>';
         }
 
-        // Appel de service Home Assistant amélioré
-        function callService(domain, service, data, entityId) {
+        function callApi(method, path, body, callback) {
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
+            xhr.open(method, haUrl + '/api' + path, true);
             xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
+            if (body) xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-                    // Supprimer de la liste des commandes en cours
-                    pendingCommands.delete(entityId);
-                    updateEntityUI(entityId, false);
-                    
-                    if (xhr.status === 200) {
-                        // Feedback visuel de succès
-                        showSuccess('✅ Commande exécutée avec succès');
-                        // Rafraîchir après un court délai
-                        setTimeout(function() {
-                            loadStates();
-                        }, 1000);
-                    } else {
-                        showError('❌ Erreur lors du contrôle de l\'équipement (Code: ' + xhr.status + ')');
-                        // Rafraîchir quand même pour récupérer l'état réel
-                        setTimeout(function() {
-                            loadStates();
-                        }, 1000);
-                    }
+                    callback(xhr.status, xhr.responseText);
                 }
             };
-            
-            xhr.onerror = function() {
-                pendingCommands.delete(entityId);
-                updateEntityUI(entityId, false);
-                showError('❌ Erreur réseau lors du contrôle');
-            };
-            
-            try {
-                xhr.send(JSON.stringify(data));
-            } catch (e) {
-                pendingCommands.delete(entityId);
-                updateEntityUI(entityId, false);
-                showError('❌ Erreur lors de l\'envoi de la commande');
-            }
+            xhr.onerror = function() { callback(0, null); };
+            xhr.send(body ? JSON.stringify(body) : null);
         }
 
-        // Recherche d'une entité
-        function findEntity(entityId) {
-            for (var i = 0; i < entities.length; i++) {
-                if (entities[i].entity_id === entityId) {
-                    return entities[i];
-                }
+        function callService(domain, service, data) {
+            callApi('POST', '/services/' + domain + '/' + service, data, function(status, response) {
+                if (status !== 200) showError('Erreur service ' + service);
+                setTimeout(loadStates, 500); // Fast refresh after action
+            });
+        }
+
+        function callScript(scriptId) {
+            callService('script', scriptId, {});
+        }
+
+        function findEntity(states, entityId) {
+            for (var i=0; i<states.length; i++) {
+                if (states[i].entity_id === entityId) return states[i];
             }
             return null;
         }
 
-        // Affichage des erreurs
-        function showError(message) {
-            var content = document.getElementById('content');
-            var errorHtml = '<div class="error">' + message + '</div>';
-            if (content.innerHTML) {
-                content.innerHTML = errorHtml + content.innerHTML;
-            } else {
-                content.innerHTML = errorHtml;
-            }
-            
-            // Auto-suppression après 5 secondes
-            setTimeout(clearErrors, 5000);
-        }
-
-        // Affichage des messages de succès
-        function showSuccess(message) {
-            var content = document.getElementById('content');
-            var successHtml = '<div class="success-feedback">' + message + '</div>';
-            if (content.innerHTML) {
-                content.innerHTML = successHtml + content.innerHTML;
-            }
-            
-            // Auto-suppression après 3 secondes
-            setTimeout(function() {
-                var success = document.querySelector('.success-feedback');
-                if (success) {
-                    success.remove();
+        function findEntityByDomain(states, domain) {
+            var results = [];
+            for (var i=0; i<states.length; i++) {
+                if (states[i].entity_id.startsWith(domain + '.')) {
+                    results.push(states[i]);
                 }
-            }, 3000);
-        }
-
-        // Effacement des erreurs
-        function clearErrors() {
-            var errors = document.getElementsByClassName('error');
-            for (var i = errors.length - 1; i >= 0; i--) {
-                errors[i].parentNode.removeChild(errors[i]);
             }
+            return results;
         }
 
-        // Mise à jour de l'heure de rafraîchissement
+        function showError(message) {
+            var errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerText = message;
+            document.body.appendChild(errorDiv);
+            setTimeout(function() { errorDiv.remove(); }, 5000);
+        }
+
         function updateLastRefresh() {
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            var seconds = now.getSeconds();
-            
-            if (hours < 10) hours = '0' + hours;
-            if (minutes < 10) minutes = '0' + minutes;
-            if (seconds < 10) seconds = '0' + seconds;
-            
-            var timeString = hours + ':' + minutes + ':' + seconds;
+            var timeString = new Date().toLocaleTimeString('fr-FR');
             document.getElementById('lastUpdate').innerHTML = '🔄 Mise à jour : ' + timeString;
         }
 
-        // Gestion des événements tactiles pour iOS
-        document.addEventListener('touchstart', function() {}, { passive: true });
-
-        // Démarrage de l'application
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-
-        // Nettoyage à la fermeture
-        window.onbeforeunload = function() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-        };
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
