@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>🏠 Home Assistant Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Maison">
     <link rel="apple-touch-icon" href="/local/icon.png">
     <style>
         * {
@@ -46,23 +45,75 @@
             opacity: 0.9;
         }
 
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Mode paysage - 3 colonnes */
+        @media (orientation: landscape) and (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            body {
+                padding: 15px;
+            }
+        }
+
+        /* iPad et tablettes */
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 25px;
+            }
+            
+            body {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+        }
+
         .section {
             background: rgba(255, 255, 255, 0.95);
             -webkit-border-radius: 12px;
             border-radius: 12px;
             padding: 15px;
-            margin: 15px 0;
             -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            break-inside: avoid;
         }
 
         .section h3 {
             color: #2c3e50;
             margin-bottom: 12px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: 600;
             border-bottom: 2px solid #ecf0f1;
             padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-count {
+            background: #667eea;
+            color: white;
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
         }
 
         .entity {
@@ -78,12 +129,33 @@
             justify-content: space-between;
             -webkit-align-items: center;
             align-items: center;
-            -webkit-transition: all 0.2s ease;
-            transition: all 0.2s ease;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .entity:active {
             background: #e9ecef;
+            transform: scale(0.98);
+        }
+
+        .entity.updating {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .entity.updating::after {
+            content: "🔄";
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: translateY(-50%) rotate(0deg); }
+            to { transform: translateY(-50%) rotate(360deg); }
         }
 
         .entity-info {
@@ -96,7 +168,7 @@
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 3px;
-            font-size: 0.95em;
+            font-size: 0.9em;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -104,7 +176,7 @@
 
         .entity-state {
             color: #666;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
         .control-btn {
@@ -116,11 +188,13 @@
             -webkit-border-radius: 20px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.85em;
-            -webkit-transition: all 0.2s ease;
-            transition: all 0.2s ease;
+            font-size: 0.8em;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
             -webkit-tap-highlight-color: rgba(0,0,0,0);
             outline: none;
+            min-width: 50px;
+            cursor: pointer;
         }
 
         .control-btn:active {
@@ -128,9 +202,33 @@
             transform: scale(0.95);
         }
 
+        .control-btn:hover {
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
         .control-btn.off {
             background: -webkit-linear-gradient(45deg, #f44336, #d32f2f);
             background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+
+        .control-btn.off:hover {
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cover-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .cover-controls .control-btn {
+            padding: 6px 10px;
+            font-size: 0.7em;
+            min-width: 35px;
         }
 
         .config-panel {
@@ -139,6 +237,9 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .config-panel h3 {
@@ -202,6 +303,7 @@
             font-size: 0.8em;
             margin-top: 15px;
             padding: 10px;
+            grid-column: 1 / -1;
         }
 
         .climate-info {
@@ -214,7 +316,7 @@
         }
 
         .climate-temp {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #2980b9;
             font-weight: 600;
         }
@@ -232,12 +334,14 @@
         .status-off { background: #f44336; }
         .status-unavailable { background: #9e9e9e; }
 
-        /* Optimisations pour iPad */
-        @media (min-width: 768px) {
-            body { padding: 20px; }
-            .header h1 { font-size: 2.5em; }
-            .section { padding: 20px; }
-            .entity { padding: 15px; }
+        .success-feedback {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            margin-top: 5px;
+            border-left: 3px solid #4CAF50;
         }
     </style>
 </head>
@@ -261,7 +365,7 @@
         <div>🔄 Connexion en cours...</div>
     </div>
     
-    <div id="content"></div>
+    <div class="dashboard-grid" id="content"></div>
     <div class="last-update" id="lastUpdate"></div>
 
     <script>
@@ -271,6 +375,7 @@
         var entities = [];
         var refreshInterval;
         var isLoading = false;
+        var pendingCommands = new Set();
 
         // Initialisation au chargement de la page
         function initApp() {
@@ -332,7 +437,7 @@
             }
             refreshInterval = setInterval(function() {
                 loadStates();
-            }, 8000);
+            }, 5000); // Réduit à 5 secondes pour plus de réactivité
         }
 
         // Chargement des états depuis Home Assistant
@@ -431,17 +536,17 @@
                 }
             }
             
-            // Affichage des sections
+            // Affichage des sections avec répartition optimisée
             if (climates.length > 0) {
                 html += createSection('🌡️ Climatisation', climates, true, 'climate');
             }
             
             if (lights.length > 0) {
-                html += createSection('💡 Éclairages', lights, true, 'light');
+                html += createSection('💡 Éclairages', lights.slice(0, 12), true, 'light');
             }
             
             if (switches.length > 0) {
-                html += createSection('🔌 Interrupteurs', switches, true, 'switch');
+                html += createSection('🔌 Interrupteurs', switches.slice(0, 10), true, 'switch');
             }
             
             if (covers.length > 0) {
@@ -449,7 +554,7 @@
             }
             
             if (sensors.length > 0) {
-                html += createSection('📊 Capteurs', sensors.slice(0, 10), false, 'sensor');
+                html += createSection('📊 Capteurs', sensors.slice(0, 8), false, 'sensor');
             }
             
             content.innerHTML = html;
@@ -458,7 +563,7 @@
         // Création d'une section
         function createSection(title, entities, controllable, type) {
             var html = '<div class="section">';
-            html += '<h3>' + title + ' (' + entities.length + ')</h3>';
+            html += '<h3>' + title + ' <span class="section-count">' + entities.length + '</span></h3>';
             
             for (var i = 0; i < entities.length; i++) {
                 html += createEntityHtml(entities[i], controllable, type);
@@ -473,6 +578,7 @@
             var friendlyName = entity.attributes.friendly_name || entity.entity_id;
             var state = entity.state;
             var unit = entity.attributes.unit_of_measurement || '';
+            var entityId = entity.entity_id;
             
             // Statut indicator
             var statusClass = 'status-unavailable';
@@ -480,7 +586,9 @@
             else if (state === 'off') statusClass = 'status-off';
             else if (state === 'unavailable') statusClass = 'status-unavailable';
             
-            var html = '<div class="entity">';
+            var updatingClass = pendingCommands.has(entityId) ? ' updating' : '';
+            
+            var html = '<div class="entity' + updatingClass + '" data-entity-id="' + entityId + '">';
             html += '<div class="entity-info">';
             html += '<div class="entity-name">';
             html += '<span class="status-indicator ' + statusClass + '"></span>';
@@ -503,12 +611,19 @@
             html += '</div>';
             
             // Boutons de contrôle
-            if (controllable && (state === 'on' || state === 'off')) {
-                var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
-                var buttonText = state === 'on' ? 'OFF' : 'ON';
-                html += '<button class="' + buttonClass + '" onclick="toggleEntity(\'' + entity.entity_id + '\')">' + buttonText + '</button>';
-            } else if (type === 'cover' && controllable) {
-                html += '<button class="control-btn" onclick="toggleCover(\'' + entity.entity_id + '\')">⬆⬇</button>';
+            if (controllable) {
+                if (type === 'cover') {
+                    html += '<div class="cover-controls">';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'open_cover\')">⬆</button>';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'stop_cover\')">⏸</button>';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'close_cover\')">⬇</button>';
+                    html += '</div>';
+                } else if (state === 'on' || state === 'off') {
+                    var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
+                    var buttonText = state === 'on' ? 'OFF' : 'ON';
+                    var disabled = pendingCommands.has(entityId) ? ' disabled' : '';
+                    html += '<button class="' + buttonClass + '"' + disabled + ' onclick="toggleEntity(\'' + entityId + '\')">' + buttonText + '</button>';
+                }
             }
             
             html += '</div>';
@@ -524,6 +639,8 @@
                 'unknown': 'Inconnu',
                 'open': 'Ouvert',
                 'closed': 'Fermé',
+                'opening': 'Ouverture...',
+                'closing': 'Fermeture...',
                 'heat': 'Chauffage',
                 'cool': 'Climatisation',
                 'auto': 'Auto',
@@ -532,28 +649,51 @@
             return translations[state] || state;
         }
 
-        // Contrôle des entités
+        // Contrôle des entités avec feedback amélioré
         function toggleEntity(entityId) {
+            if (pendingCommands.has(entityId)) return;
+            
             var entity = findEntity(entityId);
             if (!entity) return;
             
             var service = entity.state === 'on' ? 'turn_off' : 'turn_on';
             var domain = entityId.split('.')[0];
             
-            callService(domain, service, { entity_id: entityId });
-        }
-
-        // Contrôle des volets
-        function toggleCover(entityId) {
-            var entity = findEntity(entityId);
-            if (!entity) return;
+            // Marquer comme en cours de traitement
+            pendingCommands.add(entityId);
+            updateEntityUI(entityId, true);
             
-            var service = entity.state === 'open' ? 'close_cover' : 'open_cover';
-            callService('cover', service, { entity_id: entityId });
+            callService(domain, service, { entity_id: entityId }, entityId);
         }
 
-        // Appel de service Home Assistant
-        function callService(domain, service, data) {
+        // Contrôle des volets amélioré
+        function controlCover(entityId, action) {
+            if (pendingCommands.has(entityId)) return;
+            
+            pendingCommands.add(entityId);
+            updateEntityUI(entityId, true);
+            
+            callService('cover', action, { entity_id: entityId }, entityId);
+        }
+
+        // Mise à jour de l'UI pour une entité
+        function updateEntityUI(entityId, isUpdating) {
+            var entityEl = document.querySelector('[data-entity-id="' + entityId + '"]');
+            if (entityEl) {
+                if (isUpdating) {
+                    entityEl.classList.add('updating');
+                    var btn = entityEl.querySelector('.control-btn');
+                    if (btn) btn.disabled = true;
+                } else {
+                    entityEl.classList.remove('updating');
+                    var btn = entityEl.querySelector('.control-btn');
+                    if (btn) btn.disabled = false;
+                }
+            }
+        }
+
+        // Appel de service Home Assistant amélioré
+        function callService(domain, service, data, entityId) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
             xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
@@ -561,18 +701,40 @@
             
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
+                    // Supprimer de la liste des commandes en cours
+                    pendingCommands.delete(entityId);
+                    updateEntityUI(entityId, false);
+                    
                     if (xhr.status === 200) {
+                        // Feedback visuel de succès
+                        showSuccess('✅ Commande exécutée avec succès');
                         // Rafraîchir après un court délai
                         setTimeout(function() {
                             loadStates();
-                        }, 800);
+                        }, 1000);
                     } else {
-                        showError('❌ Erreur lors du contrôle de l\'équipement');
+                        showError('❌ Erreur lors du contrôle de l\'équipement (Code: ' + xhr.status + ')');
+                        // Rafraîchir quand même pour récupérer l'état réel
+                        setTimeout(function() {
+                            loadStates();
+                        }, 1000);
                     }
                 }
             };
             
-            xhr.send(JSON.stringify(data));
+            xhr.onerror = function() {
+                pendingCommands.delete(entityId);
+                updateEntityUI(entityId, false);
+                showError('❌ Erreur réseau lors du contrôle');
+            };
+            
+            try {
+                xhr.send(JSON.stringify(data));
+            } catch (e) {
+                pendingCommands.delete(entityId);
+                updateEntityUI(entityId, false);
+                showError('❌ Erreur lors de l\'envoi de la commande');
+            }
         }
 
         // Recherche d'une entité
@@ -589,7 +751,31 @@
         function showError(message) {
             var content = document.getElementById('content');
             var errorHtml = '<div class="error">' + message + '</div>';
-            content.innerHTML = errorHtml + content.innerHTML;
+            if (content.innerHTML) {
+                content.innerHTML = errorHtml + content.innerHTML;
+            } else {
+                content.innerHTML = errorHtml;
+            }
+            
+            // Auto-suppression après 5 secondes
+            setTimeout(clearErrors, 5000);
+        }
+
+        // Affichage des messages de succès
+        function showSuccess(message) {
+            var content = document.getElementById('content');
+            var successHtml = '<div class="success-feedback">' + message + '</div>';
+            if (content.innerHTML) {
+                content.innerHTML = successHtml + content.innerHTML;
+            }
+            
+            // Auto-suppression après 3 secondes
+            setTimeout(function() {
+                var success = document.querySelector('.success-feedback');
+                if (success) {
+                    success.remove();
+                }
+            }, 3000);
         }
 
         // Effacement des erreurs
