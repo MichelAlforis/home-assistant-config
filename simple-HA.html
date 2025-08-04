@@ -630,8 +630,6 @@
     <div class="header">
         <h1>🏠 Home Assistant</h1>
         <div class="header-info">Tableau de bord connecté</div>
-        
-        <!-- Navigation principale -->
         <div class="main-nav" id="mainNav">
             <button class="nav-btn active" onclick="showPage('dashboard')">🏠 Accueil</button>
             <button class="nav-btn" onclick="showPage('pieces')">🏘️ Pièces</button>
@@ -640,21 +638,34 @@
         </div>
     </div>
 
-    <div class="config-panel" id="configPanel">
-        <h3>⚙️ Configuration de connexion</h3>
-        <input type="text" id="haUrl" placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" autocomplete="off" />
-        <input type="password" id="haToken" placeholder="Token d'accès long terme" autocomplete="off" />
-        <button onclick="saveConfig()">Se connecter</button>
-        <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
-            💡 Pour créer un token : Profil → Tokens d'accès long terme
-        </div>
+    <!-- Filtres dynamiques -->
+    <div class="filter-bar" style="display:flex;justify-content:center;gap:20px;margin-bottom:15px;">
+      <div>
+        <label for="roomFilter" style="font-size:1.1em;">Pièce :</label>
+        <select id="roomFilter" style="font-size:1.1em;padding:6px 12px;border-radius:8px;">
+          <option value="all">Toutes</option>
+          <option value="adele">Adèle</option>
+          <option value="alex">Alex</option>
+          <option value="bureau">Bureau</option>
+          <option value="cuisine">Cuisine</option>
+          <option value="entree_tv">Entrée & TV</option>
+          <option value="parents">Parents</option>
+        </select>
+      </div>
+      <div>
+        <label for="materialFilter" style="font-size:1.1em;">Matériel :</label>
+        <select id="materialFilter" style="font-size:1.1em;padding:6px 12px;border-radius:8px;">
+          <option value="all">Tous</option>
+          <option value="volets">Volets</option>
+          <option value="temperature">Température</option>
+          <option value="electromenager">Électroménager</option>
+          <option value="exterieur">Extérieur</option>
+          <option value="reseau">Réseau</option>
+          <option value="imprimante">Imprimante</option>
+        </select>
+      </div>
     </div>
 
-    <div class="loading" id="loading" style="display: none;">
-        <div>🔄 Connexion en cours...</div>
-    </div>
-    
-    <!-- Page principale - Dashboard -->
     <div class="page-content" id="dashboardPage">
         <div class="dashboard-grid" id="content"></div>
         <div class="last-update" id="lastUpdate"></div>
@@ -730,12 +741,15 @@
 
         // Initialisation au chargement de la page
         function initApp() {
-            console.log('Application démarrée');
             loadStoredConfig();
-            
             if (haUrl && haToken) {
                 hideConfigPanel();
                 startAutoRefresh();
+            } else {
+                showConfigPanel();
+                document.getElementById('content').innerHTML = '';
+                var filterBar = document.querySelector('.filter-bar');
+                if (filterBar) filterBar.style.display = 'none';
             }
         }
 
@@ -746,28 +760,22 @@
         }
 
         // Sauvegarde de la configuration
+        // Correction de la logique de connexion pour compatibilité iOS 9.3.5
         function saveConfig() {
             var urlInput = document.getElementById('haUrl');
             var tokenInput = document.getElementById('haToken');
-            
             haUrl = urlInput.value.replace(/\s/g, '');
             haToken = tokenInput.value.replace(/\s/g, '');
-            
             if (!haUrl || !haToken) {
                 showError('Veuillez remplir tous les champs de configuration');
                 return;
             }
-            
-            // Nettoyer l'URL
             if (haUrl.charAt(haUrl.length - 1) === '/') {
                 haUrl = haUrl.slice(0, -1);
             }
-            
             if (haUrl.indexOf('http') !== 0) {
                 haUrl = 'http://' + haUrl;
             }
-            
-            console.log('Configuration sauvegardée:', haUrl);
             hideConfigPanel();
             startAutoRefresh();
         }
@@ -781,6 +789,7 @@
         }
 
         // Démarrage du rafraîchissement automatique
+        // Correction du refresh pour ne pas masquer le dashboard si la connexion est OK
         function startAutoRefresh() {
             loadStates();
             if (refreshInterval) {
@@ -788,7 +797,7 @@
             }
             refreshInterval = setInterval(function() {
                 loadStates();
-            }, 5000); // Réduit à 5 secondes pour plus de réactivité
+            }, 8000);
         }
 
         // Navigation entre les pages
@@ -1006,7 +1015,15 @@
         }
 
         // Chargement des états depuis Home Assistant
+        // Correction du chargement des états pour afficher le dashboard uniquement si la connexion est OK
         function loadStates() {
+            if (!haUrl || !haToken) {
+                showConfigPanel();
+                document.getElementById('content').innerHTML = '';
+                var filterBar = document.querySelector('.filter-bar');
+                if (filterBar) filterBar.style.display = 'none';
+                return;
+            }
             if (isLoading) return;
             isLoading = true;
             
@@ -1069,68 +1086,29 @@
             }
         }
 
-        // Affichage des états
+        // Affichage conditionnel du dashboard et des filtres après connexion
         function displayStates(states) {
             var content = document.getElementById('content');
+            var filterBar = document.querySelector('.filter-bar');
+            if (!haUrl || !haToken || !entities || entities.length === 0) {
+                content.innerHTML = '<div class="error">Veuillez vous connecter pour afficher les outils.</div>';
+                if (filterBar) filterBar.style.display = 'none';
+                return;
+            }
+            if (filterBar) filterBar.style.display = 'flex';
+            var room = document.getElementById('roomFilter').value;
+            var material = document.getElementById('materialFilter').value;
             var html = '';
-            
-            // Tri et organisation des entités
-            var lights = [];
-            var switches = [];
-            var climates = [];
-            var sensors = [];
-            var covers = [];
-            
-            for (var i = 0; i < states.length; i++) {
-                var entity = states[i];
-                var domain = entity.entity_id.split('.')[0];
-                
-                switch (domain) {
-                    case 'light':
-                        lights.push(entity);
-                        break;
-                    case 'switch':
-                        switches.push(entity);
-                        break;
-                    case 'climate':
-                        climates.push(entity);
-                        break;
-                    case 'cover':
-                        covers.push(entity);
-                        break;
-                    case 'sensor':
-                    case 'binary_sensor':
-                        if (entity.attributes.device_class === 'temperature' || 
-                            entity.attributes.device_class === 'humidity' ||
-                            entity.entity_id.indexOf('temperature') !== -1 ||
-                            entity.entity_id.indexOf('humidite') !== -1) {
-                            sensors.push(entity);
-                        }
-                        break;
-                }
-            }
-            
-            // Affichage des sections avec répartition optimisée
-            if (climates.length > 0) {
-                html += createSection('🌡️ Climatisation', climates, true, 'climate');
-            }
-            
-            if (lights.length > 0) {
-                html += createSection('💡 Éclairages', lights.slice(0, 15), true, 'light');
-            }
-            
-            if (switches.length > 0) {
-                html += createSection('🔌 Interrupteurs', switches.slice(0, 12), true, 'switch');
-            }
-            
-            if (covers.length > 0) {
-                html += createSection('🪟 Volets', covers.slice(0, 10), true, 'cover');
-            }
-            
-            if (sensors.length > 0) {
-                html += createSection('📊 Capteurs', sensors.slice(0, 10), false, 'sensor');
-            }
-            
+            var filtered = states.filter(function(entity) {
+                var inRoom = (room === 'all') || (entity.attributes.room === room);
+                var inMaterial = (material === 'all') || (entity.attributes.material === material);
+                return inRoom && inMaterial;
+            });
+            html += '<div class="dashboard-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;">';
+            filtered.forEach(function(entity) {
+                html += createEntityHtml(entity, true, entity.entity_id.split('.')[0]);
+            });
+            html += '</div>';
             content.innerHTML = html;
         }
 
@@ -1153,59 +1131,34 @@
             var state = entity.state;
             var unit = entity.attributes.unit_of_measurement || '';
             var entityId = entity.entity_id;
-            
-            // Statut indicator
             var statusClass = 'status-unavailable';
             if (state === 'on') statusClass = 'status-on';
             else if (state === 'off') statusClass = 'status-off';
             else if (state === 'unavailable') statusClass = 'status-unavailable';
-            
             var updatingClass = pendingCommands.has(entityId) ? ' updating' : '';
             var sensorClass = !controllable ? ' sensor-only' : '';
-            
             var html = '<div class="entity' + updatingClass + sensorClass + '" data-entity-id="' + entityId + '">';
             html += '<div class="entity-info">';
             html += '<div class="entity-name">';
             html += '<span class="status-indicator ' + statusClass + '"></span>';
             html += friendlyName + '</div>';
-            
-            if (type === 'climate') {
-                var currentTemp = entity.attributes.current_temperature;
-                var targetTemp = entity.attributes.temperature;
-                html += '<div class="entity-state">État: ' + translateState(state) + '</div>';
-                if (currentTemp && targetTemp) {
-                    html += '<div class="climate-info">';
-                    html += '<span class="climate-temp">Actuel: ' + currentTemp + '°C</span>';
-                    html += '<span class="climate-temp">Cible: ' + targetTemp + '°C</span>';
-                    html += '</div>';
-                }
-            } else if (type === 'sensor' && unit) {
-                // Pour les capteurs, mettre en valeur la mesure
-                html += '<div class="entity-state">';
-                html += '<span class="entity-value">' + state + ' ' + unit + '</span>';
-                html += '</div>';
-            } else {
-                html += '<div class="entity-state">' + translateState(state) + ' ' + unit + '</div>';
-            }
-            
+            html += '<div class="entity-state">' + translateState(state) + ' ' + unit + '</div>';
             html += '</div>';
-            
-            // Boutons de contrôle
+            // Boutons d'action plus grands
             if (controllable) {
                 if (type === 'cover') {
                     html += '<div class="cover-controls">';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'open_cover\')">⬆</button>';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'stop_cover\')">⏸</button>';
-                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'close_cover\')">⬇</button>';
+                    html += '<button class="control-btn" style="font-size:2em;padding:18px 32px;min-width:80px;" onclick="controlCover(\'' + entityId + '\', \'open_cover\')">⬆</button>';
+                    html += '<button class="control-btn" style="font-size:2em;padding:18px 32px;min-width:80px;" onclick="controlCover(\'' + entityId + '\', \'stop_cover\')">⏸</button>';
+                    html += '<button class="control-btn" style="font-size:2em;padding:18px 32px;min-width:80px;" onclick="controlCover(\'' + entityId + '\', \'close_cover\')">⬇</button>';
                     html += '</div>';
                 } else if (state === 'on' || state === 'off') {
                     var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
                     var buttonText = state === 'on' ? 'OFF' : 'ON';
                     var disabled = pendingCommands.has(entityId) ? ' disabled' : '';
-                    html += '<button class="' + buttonClass + '"' + disabled + ' onclick="toggleEntity(\'' + entityId + '\')">' + buttonText + '</button>';
+                    html += '<button class="' + buttonClass + '" style="font-size:2em;padding:18px 32px;min-width:80px;"' + disabled + ' onclick="toggleEntity(\'' + entityId + '\')">' + buttonText + '</button>';
                 }
             }
-            
             html += '</div>';
             return html;
         }
@@ -1410,6 +1363,18 @@
                 clearInterval(refreshInterval);
             }
         };
+
+        // Ajout des listeners pour les filtres
+        if (document.getElementById('roomFilter')) {
+            document.getElementById('roomFilter').addEventListener('change', function() {
+                displayStates(entities);
+            });
+        }
+        if (document.getElementById('materialFilter')) {
+            document.getElementById('materialFilter').addEventListener('change', function() {
+                displayStates(entities);
+            });
+        }
     </script>
 </body>
 </html>
