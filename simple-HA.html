@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>🏠 Home Assistant Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Maison">
+    <link rel="apple-touch-icon" href="/local/icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: -webkit-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 10px;
+            -webkit-text-size-adjust: none;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 300;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header-info {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-border-radius: 12px;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+
+        .entity {
+            background: #f8f9fa;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        .entity:active {
+            background: #e9ecef;
+        }
+
+        .entity-info {
+            -webkit-flex: 1;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .entity-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            font-size: 0.95em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .entity-state {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .control-btn {
+            background: -webkit-linear-gradient(45deg, #4CAF50, #45a049);
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            outline: none;
+        }
+
+        .control-btn:active {
+            -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+        }
+
+        .control-btn.off {
+            background: -webkit-linear-gradient(45deg, #f44336, #d32f2f);
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+
+        .config-panel {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-border-radius: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .config-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .config-panel input {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: 2px solid #e9ecef;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+            font-size: 1em;
+            -webkit-appearance: none;
+            background: white;
+        }
+
+        .config-panel input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .config-panel button {
+            background: -webkit-linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #d32f2f;
+            padding: 12px;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+            font-size: 0.9em;
+        }
+
+        .last-update {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.8em;
+            margin-top: 15px;
+            padding: 10px;
+        }
+
+        .climate-info {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .climate-temp {
+            font-size: 0.9em;
+            color: #2980b9;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-on { background: #4CAF50; }
+        .status-off { background: #f44336; }
+        .status-unavailable { background: #9e9e9e; }
+
+        /* Optimisations pour iPad */
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .header h1 { font-size: 2.5em; }
+            .section { padding: 20px; }
+            .entity { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 Home Assistant</h1>
+        <div class="header-info">Tableau de bord connecté</div>
+    </div>
+
+    <div class="config-panel" id="configPanel">
+        <h3>⚙️ Configuration de connexion</h3>
+        <input type="text" id="haUrl" placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" autocomplete="off" />
+        <input type="password" id="haToken" placeholder="Token d'accès long terme" autocomplete="off" />
+        <button onclick="saveConfig()">Se connecter</button>
+        <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
+            💡 Pour créer un token : Profil → Tokens d'accès long terme
+        </div>
+    </div>
+
+    <div class="loading" id="loading" style="display: none;">
+        <div>🔄 Connexion en cours...</div>
+    </div>
+    
+    <div id="content"></div>
+    <div class="last-update" id="lastUpdate"></div>
+
+    <script>
+        // Variables globales
+        var haUrl = '';
+        var haToken = '';
+        var entities = [];
+        var refreshInterval;
+        var isLoading = false;
+
+        // Initialisation au chargement de la page
+        function initApp() {
+            console.log('Application démarrée');
+            loadStoredConfig();
+            
+            if (haUrl && haToken) {
+                hideConfigPanel();
+                startAutoRefresh();
+            }
+        }
+
+        // Chargement de la configuration stockée (simulation)
+        function loadStoredConfig() {
+            // Pour iOS 9.3.5, on ne peut pas utiliser localStorage de manière fiable
+            // La configuration devra être saisie à chaque fois
+        }
+
+        // Sauvegarde de la configuration
+        function saveConfig() {
+            var urlInput = document.getElementById('haUrl');
+            var tokenInput = document.getElementById('haToken');
+            
+            haUrl = urlInput.value.replace(/\s/g, '');
+            haToken = tokenInput.value.replace(/\s/g, '');
+            
+            if (!haUrl || !haToken) {
+                showError('Veuillez remplir tous les champs de configuration');
+                return;
+            }
+            
+            // Nettoyer l'URL
+            if (haUrl.charAt(haUrl.length - 1) === '/') {
+                haUrl = haUrl.slice(0, -1);
+            }
+            
+            if (haUrl.indexOf('http') !== 0) {
+                haUrl = 'http://' + haUrl;
+            }
+            
+            console.log('Configuration sauvegardée:', haUrl);
+            hideConfigPanel();
+            startAutoRefresh();
+        }
+
+        function hideConfigPanel() {
+            document.getElementById('configPanel').style.display = 'none';
+        }
+
+        function showConfigPanel() {
+            document.getElementById('configPanel').style.display = 'block';
+        }
+
+        // Démarrage du rafraîchissement automatique
+        function startAutoRefresh() {
+            loadStates();
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            refreshInterval = setInterval(function() {
+                loadStates();
+            }, 8000);
+        }
+
+        // Chargement des états depuis Home Assistant
+        function loadStates() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            var loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'block';
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', haUrl + '/api/states', true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    isLoading = false;
+                    loadingEl.style.display = 'none';
+                    
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            entities = data;
+                            displayStates(data);
+                            updateLastRefresh();
+                            clearErrors();
+                        } catch (e) {
+                            console.error('Erreur parsing:', e);
+                            showError('Erreur de traitement des données: ' + e.message);
+                        }
+                    } else if (xhr.status === 401) {
+                        showError('🔐 Token invalide - Vérifiez votre token d\'accès');
+                        showConfigPanel();
+                    } else if (xhr.status === 0) {
+                        showError('🌐 Impossible de se connecter - Vérifiez votre URL et votre réseau');
+                    } else {
+                        showError('⚠️ Erreur de connexion (Code: ' + xhr.status + ')');
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
+                isLoading = false;
+                loadingEl.style.display = 'none';
+                showError('🔌 Erreur réseau - Vérifiez votre connexion Internet');
+            };
+            
+            try {
+                xhr.send();
+            } catch (e) {
+                isLoading = false;
+                loadingEl.style.display = 'none';
+                showError('Erreur lors de l\'envoi de la requête');
+            }
+        }
+
+        // Affichage des états
+        function displayStates(states) {
+            var content = document.getElementById('content');
+            var html = '';
+            
+            // Tri et organisation des entités
+            var lights = [];
+            var switches = [];
+            var climates = [];
+            var sensors = [];
+            var covers = [];
+            
+            for (var i = 0; i < states.length; i++) {
+                var entity = states[i];
+                var domain = entity.entity_id.split('.')[0];
+                
+                switch (domain) {
+                    case 'light':
+                        lights.push(entity);
+                        break;
+                    case 'switch':
+                        switches.push(entity);
+                        break;
+                    case 'climate':
+                        climates.push(entity);
+                        break;
+                    case 'cover':
+                        covers.push(entity);
+                        break;
+                    case 'sensor':
+                    case 'binary_sensor':
+                        if (entity.attributes.device_class === 'temperature' || 
+                            entity.attributes.device_class === 'humidity' ||
+                            entity.entity_id.indexOf('temperature') !== -1 ||
+                            entity.entity_id.indexOf('humidite') !== -1) {
+                            sensors.push(entity);
+                        }
+                        break;
+                }
+            }
+            
+            // Affichage des sections
+            if (climates.length > 0) {
+                html += createSection('🌡️ Climatisation', climates, true, 'climate');
+            }
+            
+            if (lights.length > 0) {
+                html += createSection('💡 Éclairages', lights, true, 'light');
+            }
+            
+            if (switches.length > 0) {
+                html += createSection('🔌 Interrupteurs', switches, true, 'switch');
+            }
+            
+            if (covers.length > 0) {
+                html += createSection('🪟 Volets', covers.slice(0, 8), true, 'cover');
+            }
+            
+            if (sensors.length > 0) {
+                html += createSection('📊 Capteurs', sensors.slice(0, 10), false, 'sensor');
+            }
+            
+            content.innerHTML = html;
+        }
+
+        // Création d'une section
+        function createSection(title, entities, controllable, type) {
+            var html = '<div class="section">';
+            html += '<h3>' + title + ' (' + entities.length + ')</h3>';
+            
+            for (var i = 0; i < entities.length; i++) {
+                html += createEntityHtml(entities[i], controllable, type);
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Création du HTML pour une entité
+        function createEntityHtml(entity, controllable, type) {
+            var friendlyName = entity.attributes.friendly_name || entity.entity_id;
+            var state = entity.state;
+            var unit = entity.attributes.unit_of_measurement || '';
+            
+            // Statut indicator
+            var statusClass = 'status-unavailable';
+            if (state === 'on') statusClass = 'status-on';
+            else if (state === 'off') statusClass = 'status-off';
+            else if (state === 'unavailable') statusClass = 'status-unavailable';
+            
+            var html = '<div class="entity">';
+            html += '<div class="entity-info">';
+            html += '<div class="entity-name">';
+            html += '<span class="status-indicator ' + statusClass + '"></span>';
+            html += friendlyName + '</div>';
+            
+            if (type === 'climate') {
+                var currentTemp = entity.attributes.current_temperature;
+                var targetTemp = entity.attributes.temperature;
+                html += '<div class="entity-state">État: ' + translateState(state) + '</div>';
+                if (currentTemp && targetTemp) {
+                    html += '<div class="climate-info">';
+                    html += '<span class="climate-temp">Actuel: ' + currentTemp + '°C</span>';
+                    html += '<span class="climate-temp">Cible: ' + targetTemp + '°C</span>';
+                    html += '</div>';
+                }
+            } else {
+                html += '<div class="entity-state">' + translateState(state) + ' ' + unit + '</div>';
+            }
+            
+            html += '</div>';
+            
+            // Boutons de contrôle
+            if (controllable && (state === 'on' || state === 'off')) {
+                var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
+                var buttonText = state === 'on' ? 'OFF' : 'ON';
+                html += '<button class="' + buttonClass + '" onclick="toggleEntity(\'' + entity.entity_id + '\')">' + buttonText + '</button>';
+            } else if (type === 'cover' && controllable) {
+                html += '<button class="control-btn" onclick="toggleCover(\'' + entity.entity_id + '\')">⬆⬇</button>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Traduction des états
+        function translateState(state) {
+            var translations = {
+                'on': 'Allumé',
+                'off': 'Éteint',
+                'unavailable': 'Indisponible',
+                'unknown': 'Inconnu',
+                'open': 'Ouvert',
+                'closed': 'Fermé',
+                'heat': 'Chauffage',
+                'cool': 'Climatisation',
+                'auto': 'Auto',
+                'idle': 'Inactif'
+            };
+            return translations[state] || state;
+        }
+
+        // Contrôle des entités
+        function toggleEntity(entityId) {
+            var entity = findEntity(entityId);
+            if (!entity) return;
+            
+            var service = entity.state === 'on' ? 'turn_off' : 'turn_on';
+            var domain = entityId.split('.')[0];
+            
+            callService(domain, service, { entity_id: entityId });
+        }
+
+        // Contrôle des volets
+        function toggleCover(entityId) {
+            var entity = findEntity(entityId);
+            if (!entity) return;
+            
+            var service = entity.state === 'open' ? 'close_cover' : 'open_cover';
+            callService('cover', service, { entity_id: entityId });
+        }
+
+        // Appel de service Home Assistant
+        function callService(domain, service, data) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // Rafraîchir après un court délai
+                        setTimeout(function() {
+                            loadStates();
+                        }, 800);
+                    } else {
+                        showError('❌ Erreur lors du contrôle de l\'équipement');
+                    }
+                }
+            };
+            
+            xhr.send(JSON.stringify(data));
+        }
+
+        // Recherche d'une entité
+        function findEntity(entityId) {
+            for (var i = 0; i < entities.length; i++) {
+                if (entities[i].entity_id === entityId) {
+                    return entities[i];
+                }
+            }
+            return null;
+        }
+
+        // Affichage des erreurs
+        function showError(message) {
+            var content = document.getElementById('content');
+            var errorHtml = '<div class="error">' + message + '</div>';
+            content.innerHTML = errorHtml + content.innerHTML;
+        }
+
+        // Effacement des erreurs
+        function clearErrors() {
+            var errors = document.getElementsByClassName('error');
+            for (var i = errors.length - 1; i >= 0; i--) {
+                errors[i].parentNode.removeChild(errors[i]);
+            }
+        }
+
+        // Mise à jour de l'heure de rafraîchissement
+        function updateLastRefresh() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+            
+            if (hours < 10) hours = '0' + hours;
+            if (minutes < 10) minutes = '0' + minutes;
+            if (seconds < 10) seconds = '0' + seconds;
+            
+            var timeString = hours + ':' + minutes + ':' + seconds;
+            document.getElementById('lastUpdate').innerHTML = '🔄 Mise à jour : ' + timeString;
+        }
+
+        // Gestion des événements tactiles pour iOS
+        document.addEventListener('touchstart', function() {}, { passive: true });
+
+        // Démarrage de l'application
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // Nettoyage à la fermeture
+        window.onbeforeunload = function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        };
+    </script>
+</body>
+</html>
