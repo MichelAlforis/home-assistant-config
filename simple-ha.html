@@ -1,488 +1,560 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <title>🏠 Home Assistant Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Simple HA Dashboard</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Maison">
+    <link rel="apple-touch-icon" href="/local/icon.png">
     <style>
-        /* Basic Reset & Body Style */
-        body, html {
+        * {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            height: 100%;
-            overflow: hidden; /* Prevent scrolling */
-        }
-
-        /* Main container */
-        .dashboard {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            padding: 10px;
+            -webkit-box-sizing: border-box;
             box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: center / cover no-repeat url("/local/fond_tablette.webp") fixed;
-        }
-
-        /* Header section */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
+            color: #FFF; /* Changed text color to white for better contrast on image */
             padding: 10px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            margin-bottom: 10px;
+            -webkit-text-size-adjust: none;
         }
-        .header .greeting h2 {
-            margin: 0;
-            font-size: 1.2em;
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            padding: 10px;
         }
-        .header .greeting p {
-            margin: 0;
-            font-size: 0.8em;
-            opacity: 0.8;
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 300;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        .header .sensors {
+
+        .header-info {
             font-size: 0.9em;
-            text-align: right;
+            opacity: 0.9;
         }
 
-        /* Main content grid */
-        .content {
-            flex-grow: 1;
-            display: flex;
-            gap: 10px;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .column.main {
-            flex-grow: 2;
-        }
-
-        .column.sidebar {
-            flex-grow: 1;
-        }
-
-        /* Card styles */
-        .card {
-            background-color: rgba(0, 0, 0, 0.3);
+        .section {
+            background: rgba(0, 0, 0, 0.3);
+            -webkit-border-radius: 12px;
             border-radius: 12px;
             padding: 15px;
-            box-sizing: border-box;
-        }
-        .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1em;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .card.climate-summary {
-            flex-grow: 1;
+        .section h3 {
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
         }
 
-        .climate-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-        }
-
-        .climate-item {
-            background-color: rgba(255, 255, 255, 0.1);
+        .entity {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-border-radius: 8px;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
+            margin: 8px 0;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        .entity:active {
+            background: #e9ecef;
+        }
+
+        .entity-info {
+            -webkit-flex: 1;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .entity-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 3px;
+            font-size: 0.95em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .entity-state {
+            color: #dddddd;
+            font-size: 0.85em;
+        }
+
+        .control-btn {
+            background: -webkit-linear-gradient(45deg, #1565C0, #1976D2);
+            background: linear-gradient(45deg, #1565C0, #1976D2);
+            color: white;
+            border: none;
+            padding: 8px 0;
+            width: 80px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            outline: none;
             text-align: center;
         }
-        .climate-item .name {
-            font-weight: bold;
+
+        .control-btn:active {
+            -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+        }
+
+        .control-btn.off {
+            background: -webkit-linear-gradient(45deg, #c62828, #d32f2f);
+            background: linear-gradient(45deg, #c62828, #d32f2f);
+        }
+
+        .config-panel {
+            background: rgba(0, 0, 0, 0.3);
+            -webkit-border-radius: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .config-panel h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .config-panel input {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: 2px solid #e9ecef;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+            font-size: 1em;
+            -webkit-appearance: none;
+            background: white;
+        }
+
+        .config-panel input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .config-panel button {
+            background: -webkit-linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #d32f2f;
+            padding: 12px;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
             font-size: 0.9em;
         }
-        .climate-item .temp {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-        .climate-item .state {
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
 
-        /* Button styles */
-        .button-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            flex-grow: 1;
-        }
-
-        .btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 10px;
-            border-radius: 12px;
-            border: none;
-            color: white;
-            font-size: 1em;
-            font-weight: bold;
+        .last-update {
             text-align: center;
-            cursor: pointer;
-            min-height: 60px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.8em;
+            margin-top: 15px;
+            padding: 10px;
         }
-        .btn .icon {
-            font-size: 1.5em; /* For emoji icons */
+
+        .climate-info {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-top: 5px;
         }
-        .btn.piece { background-color: #1565C0; } /* Blue */
-        .btn.materiel { background-color: #F57F17; } /* Orange */
-        .btn.scenario { background-color: #9C27B0; } /* Purple */
+
+        .climate-temp {
+            font-size: 0.9em;
+            color: #2980b9;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-on { background: #4CAF50; }
+        .status-off { background: #f44336; }
+        .status-unavailable { background: #9e9e9e; }
+
+        /* Navigation Buttons */
+        .nav-grid {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .nav-section {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            min-width: 200px;
+        }
+        .button-grid {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            text-align: center;
+            -webkit-border-radius: 12px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-transform: scale(0.98);
+            transform: scale(0.98);
+        }
+
+        /* Optimisations pour iPad */
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .header h1 { font-size: 2.5em; }
+            .section { padding: 20px; }
+            .entity { padding: 15px; }
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1 id="greeting">Bonjour !</h1>
+        <div class="header-info" id="date">-- -- ----</div>
+    </div>
 
-    <div class="dashboard">
-
-        <!-- Header -->
-        <div class="header">
-            <div class="greeting">
-                <h2 id="greeting">Bonjour !</h2>
-                <p id="date">-- -- ----</p>
-            </div>
-            <div class="sensors">
-                <span id="temp_salon">--°C</span> •
-                <span id="power_usage">--W</span>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="content">
-
-            <!-- Main Column (Weather & Climate) -->
-            <div class="column main">
-                 <!-- Climate Summary -->
-                <div class="card climate-summary">
-                    <h3>🌡️ Climat intérieur</h3>
-                    <div class="climate-grid">
-                        <div class="climate-item" id="climate-adele">
-                            <div class="name">👧 Adèle</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                        <div class="climate-item" id="climate-alex">
-                            <div class="name">👦 Alex</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                        <div class="climate-item" id="climate-bureau">
-                            <div class="name">💼 Bureau</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                        <div class="climate-item" id="climate-cuisine">
-                            <div class="name">🍳 Cuisine</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                        <div class="climate-item" id="climate-entree">
-                            <div class="name">📺 Entrée & TV</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                        <div class="climate-item" id="climate-parents">
-                            <div class="name">🛏️ Parents</div>
-                            <div class="temp">--°C</div>
-                            <div class="state">--</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation Columns -->
-            <div class="column sidebar">
-                <div class="card">
-                    <h3>🏠 Pièces</h3>
-                    <div class="button-grid">
-                        <button class="btn piece" onclick="location.href='rooms.html?room=rdc'">RDC</button>
-                        <button class="btn piece" onclick="location.href='rooms.html?room=etage1'">R+1</button>
-                        <button class="btn piece" onclick="location.href='rooms.html?room=etage2'">R+2</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="column sidebar">
-                <div class="card">
-                    <h3>🧰 Matériel</h3>
-                    <div class="button-grid">
-                        <button class="btn materiel" onclick="location.href='devices.html?device=volets'">Volets</button>
-                        <button class="btn materiel" onclick="location.href='devices.html?device=temperature'">Température</button>
-                        <button class="btn materiel" onclick="location.href='devices.html?device=electromenager'">Électroménager</button>
-                        <button class="btn materiel" onclick="location.href='devices.html?device=exterieur'">Extérieur</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="column sidebar">
-                <div class="card">
-                    <h3>🎬 Scénarios</h3>
-                    <div class="button-grid">
-                        <button class="btn scenario" data-service="script.scenario_reveil">🌅 Réveil</button>
-                        <button class="btn scenario" data-service="script.scenario_coucher">🌙 Coucher</button>
-                        <button class="btn scenario" data-service="script.scenario_absent">🏠 Absent</button>
-                        <button class="btn scenario" data-service="script.scenario_fete">🎉 Fête</button>
-                    </div>
-                </div>
-            </div>
-
+    <div class="config-panel" id="configPanel">
+        <h3>⚙️ Configuration de connexion</h3>
+        <input type="text" id="haUrl" placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" autocomplete="off" />
+        <input type="password" id="haToken" placeholder="Token d'accès long terme" autocomplete="off" />
+        <button onclick="saveConfig()">Se connecter</button>
+        <div style="margin-top: 10px; font-size: 0.85em; color: #dddddd;">
+            💡 Pour créer un token : Profil → Tokens d'accès long terme
         </div>
     </div>
 
+    <div class="loading" id="loading" style="display: none;">
+        <div>🔄 Connexion en cours...</div>
+    </div>
+
+    <div id="content" class="nav-grid"></div>
+    <div class="last-update" id="lastUpdate"></div>
+
     <script>
-    (function() {
-        // 1. CONFIGURATION
-        // =================
-        // IMPORTANT: Replace these values with your Home Assistant details.
-        // Replace with your Home Assistant URL, e.g., 'ws://192.168.1.123:8123/api/websocket'
-        // If using SSL, use 'wss://'
-        var hassUrl = 'ws://YOUR_HA_IP_ADDRESS:8123/api/websocket';
-        // Replace with your Long-Lived Access Token from your Home Assistant profile page.
-        var accessToken = 'YOUR_LONG_LIVED_ACCESS_TOKEN';
+        // Variables globales
+        var haUrl = '';
+        var haToken = '';
+        var entities = [];
+        var refreshInterval;
+        var isLoading = false;
 
-        // Internal variables
-        var socket;
-        var messageId = 1;
-        var commandCallbacks = {};
+        // Initialisation au chargement de la page
+        function initApp() {
+            console.log('Application démarrée');
+            loadStoredConfig();
 
-        // 2. DOM ELEMENTS
-        // ===============
-        var elements = {
-            greeting: document.getElementById('greeting'),
-            date: document.getElementById('date'),
-            temp_salon: document.getElementById('temp_salon'),
-            power_usage: document.getElementById('power_usage'),
-            climate: {
-                adele: document.getElementById('climate-adele'),
-                alex: document.getElementById('climate-alex'),
-                bureau: document.getElementById('climate-bureau'),
-                cuisine: document.getElementById('climate-cuisine'),
-                entree: document.getElementById('climate-entree'),
-                parents: document.getElementById('climate-parents')
+            if (haUrl && haToken) {
+                hideConfigPanel();
+                startAutoRefresh();
             }
-        };
+        }
 
-        // 3. CORE WEBSOCKET LOGIC
-        // =======================
-        function connect() {
-            console.log('Connecting to Home Assistant at ' + hassUrl);
-            try {
-                socket = new WebSocket(hassUrl);
-            } catch (e) {
-                console.error('Error creating WebSocket. Check the hassUrl.', e);
+        // Chargement de la configuration stockée (simulation)
+        function loadStoredConfig() {
+            // Pour iOS 9.3.5, on ne peut pas utiliser localStorage de manière fiable
+            // La configuration devra être saisie à chaque fois
+        }
+
+        // Sauvegarde de la configuration
+        function saveConfig() {
+            var urlInput = document.getElementById('haUrl');
+            var tokenInput = document.getElementById('haToken');
+
+            haUrl = urlInput.value.replace(/\s/g, '');
+            haToken = tokenInput.value.replace(/\s/g, '');
+
+            if (!haUrl || !haToken) {
+                showError('Veuillez remplir tous les champs de configuration');
                 return;
             }
 
-            socket.onopen = function() {
-                console.log('Connection established.');
-            };
+            // Nettoyer l'URL
+            if (haUrl.charAt(haUrl.length - 1) === '/') {
+                haUrl = haUrl.slice(0, -1);
+            }
 
-            socket.onmessage = function(event) {
-                var message = JSON.parse(event.data);
-                // console.log('Received:', message); // Uncomment for debugging
+            if (haUrl.indexOf('http') !== 0) {
+                haUrl = 'http://' + haUrl;
+            }
 
-                if (message.type === 'auth_required') {
-                    authenticate();
-                } else if (message.type === 'auth_ok') {
-                    console.log('Authenticated successfully!');
-                    subscribeToStateChanges();
-                    getInitialStates();
-                } else if (message.type === 'auth_invalid') {
-                    console.error('Authentication failed:', message.message);
-                    alert('Home Assistant authentication failed. Check your Access Token.');
-                } else if (message.type === 'event' && message.event.event_type === 'state_changed') {
-                    updateEntity(message.event.data.entity_id, message.event.data.new_state);
-                } else if (message.type === 'result' && message.id in commandCallbacks) {
-                    if (message.success) {
-                        commandCallbacks[message.id](message.result);
+            console.log('Configuration sauvegardée:', haUrl);
+            hideConfigPanel();
+            startAutoRefresh();
+        }
+
+        function hideConfigPanel() {
+            document.getElementById('configPanel').style.display = 'none';
+        }
+
+        function showConfigPanel() {
+            document.getElementById('configPanel').style.display = 'block';
+        }
+
+        // Démarrage du rafraîchissement automatique
+        function startAutoRefresh() {
+            loadStates();
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            refreshInterval = setInterval(function() {
+                loadStates();
+            }, 8000);
+        }
+
+        // Chargement des états depuis Home Assistant
+        function loadStates() {
+            if (isLoading) return;
+            isLoading = true;
+
+            var loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'block';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', haUrl + '/api/states', true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    isLoading = false;
+                    loadingEl.style.display = 'none';
+
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            entities = data; // We still store entities for potential future use
+                            displayHomepage(); // Display the navigation menu
+                            updateLastRefresh();
+                            clearErrors();
+                        } catch (e) {
+                            console.error('Erreur parsing:', e);
+                            showError('Erreur de traitement des données: ' + e.message);
+                        }
+                    } else if (xhr.status === 401) {
+                        showError('🔐 Token invalide - Vérifiez votre token d\'accès');
+                        showConfigPanel();
+                    } else if (xhr.status === 0) {
+                        showError('🌐 Impossible de se connecter - Vérifiez votre URL et votre réseau');
                     } else {
-                        console.error('Command failed:', message.error);
+                        showError('⚠️ Erreur de connexion (Code: ' + xhr.status + ')');
                     }
-                    delete commandCallbacks[message.id];
                 }
             };
 
-            socket.onclose = function() {
-                console.log('Connection closed. Retrying in 5 seconds...');
-                setTimeout(connect, 5000);
+            xhr.onerror = function() {
+                isLoading = false;
+                loadingEl.style.display = 'none';
+                showError('🔌 Erreur réseau - Vérifiez votre connexion Internet');
             };
 
-            socket.onerror = function(error) {
-                console.error('WebSocket Error:', error);
-                // The onclose event will fire next, triggering a reconnect.
-            };
-        }
-
-        function sendMessage(message, callback) {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                console.error('Cannot send message, WebSocket is not connected.');
-                return;
-            }
-            message.id = messageId++;
-            if (callback) {
-                commandCallbacks[message.id] = callback;
-            }
-            // console.log('Sending:', message); // Uncomment for debugging
-            socket.send(JSON.stringify(message));
-        }
-
-        function authenticate() {
-            sendMessage({
-                type: 'auth',
-                access_token: accessToken
-            });
-        }
-
-        function subscribeToStateChanges() {
-            sendMessage({
-                type: 'subscribe_events',
-                event_type: 'state_changed'
-            });
-        }
-
-        function getInitialStates() {
-            sendMessage({ type: 'get_states' }, function(states) {
-                console.log('Received ' + states.length + ' initial states.');
-                for (var i = 0; i < states.length; i++) {
-                    updateEntity(states[i].entity_id, states[i]);
-                }
-            });
-        }
-
-        // 4. UI UPDATE LOGIC
-        // ==================
-        function updateEntity(entityId, state) {
-            if (!state) return;
-
-            switch (entityId) {
-                case 'sensor.temp_salon':
-                    elements.temp_salon.innerText = parseFloat(state.state).toFixed(1) + '°C';
-                    break;
-                case 'sensor.consommation_electrique':
-                    elements.power_usage.innerText = parseInt(state.state, 10) + 'W';
-                    break;
-                case 'climate.adele':
-                    updateClimate('adele', state);
-                    break;
-                case 'climate.alex':
-                    updateClimate('alex', state);
-                    break;
-                case 'climate.bureau':
-                    updateClimate('bureau', state);
-                    break;
-                case 'climate.cuisine':
-                    updateClimate('cuisine', state);
-                    break;
-                case 'climate.entree_tv':
-                    updateClimate('entree', state);
-                    break;
-                case 'climate.parents':
-                    updateClimate('parents', state);
-                    break;
+            try {
+                xhr.send();
+            } catch (e) {
+                isLoading = false;
+                loadingEl.style.display = 'none';
+                showError('Erreur lors de l'envoi de la requête');
             }
         }
 
-        function updateClimate(name, state) {
-            var el = elements.climate[name];
-            if (!el) return;
+        // Affichage de la page d'accueil
+        function displayHomepage() {
+            var content = document.getElementById('content');
+            var html = '';
 
-            var currentTemp = state.attributes.current_temperature;
-            var hvacState = state.state;
+            // Section Pièces
+            html += '<div class="section nav-section">';
+            html += '<h3>🏠 Pièces</h3>';
+            html += '<div class="button-grid">';
+            html += '<a href="rooms.html?room=rdc" class="nav-btn">RDC</a>';
+            html += '<a href="rooms.html?room=etage1" class="nav-btn">R+1</a>';
+            html += '<a href="rooms.html?room=etage2" class="nav-btn">R+2</a>';
+            html += '</div></div>';
 
-            var tempEl = el.querySelector('.temp');
-            var stateEl = el.querySelector('.state');
+            // Section Matériel
+            html += '<div class="section nav-section">';
+            html += '<h3>🧰 Matériel</h3>';
+            html += '<div class="button-grid">';
+            html += '<a href="devices.html?device=volets" class="nav-btn">Volets</a>';
+            html += '<a href="devices.html?device=temperature" class="nav-btn">Température</a>';
+            html += '<a href="devices.html?device=electromenager" class="nav-btn">Électroménager</a>';
+            html += '<a href="devices.html?device=exterieur" class="nav-btn">Extérieur</a>';
+            html += '</div></div>';
 
-            if (currentTemp !== null && currentTemp !== undefined) {
-                 tempEl.innerText = parseFloat(currentTemp).toFixed(1) + '°C';
-            } else {
-                 tempEl.innerText = '--°C';
-            }
+            // Section Scénarios
+            html += '<div class="section nav-section">';
+            html += '<h3>🎬 Scénarios</h3>';
+            html += '<div class="button-grid">';
+            html += '<button class="nav-btn scenario-btn" data-service="script.scenario_reveil">🌅 Réveil</button>';
+            html += '<button class="nav-btn scenario-btn" data-service="script.scenario_coucher">🌙 Coucher</button>';
+            html += '<button class="nav-btn scenario-btn" data-service="script.scenario_absent">🏠 Absent</button>';
+            html += '<button class="nav-btn scenario-btn" data-service="script.scenario_fete">🎉 Fête</button>';
+            html += '</div></div>';
 
-            stateEl.innerText = hvacState.charAt(0).toUpperCase() + hvacState.slice(1);
-        }
+            content.innerHTML = html;
 
-        function updateDateTime() {
-            var now = new Date();
-            var options = { weekday: 'long', day: 'numeric', month: 'long' };
-            var dateString = now.toLocaleDateString('fr-FR', options);
-            elements.date.innerText = dateString.charAt(0).toUpperCase() + dateString.slice(1);
-        }
-
-        // 5. SERVICE CALL LOGIC
-        // =====================
-        function callService(serviceString) {
-            var parts = serviceString.split('.');
-            if (parts.length < 2) {
-                console.error('Invalid service format:', serviceString);
-                return;
-            }
-            var domain = parts[0];
-            var service = parts.slice(1).join('.');
-
-            console.log('Calling service -> Domain: ' + domain + ', Service: ' + service);
-            sendMessage({
-                type: 'call_service',
-                domain: domain,
-                service: service,
-                target: {
-                    entity_id: serviceString
-                }
-            }, function(result) {
-                console.log('Service call for "' + serviceString + '" was successful.');
-                // Provide simple feedback to the user.
-                var button = document.querySelector('.btn[data-service="' + serviceString + '"]');
-                var friendlyName = button ? button.innerText : serviceString;
-                // Not showing an alert on success to avoid being too noisy.
-                // The device state change should be feedback enough.
-            });
-        }
-
-        // 6. INITIALIZATION
-        // =================
-        function initializeScenarioButtons() {
-            var scenarioButtons = document.querySelectorAll('.btn.scenario');
+            // Add event listeners for scenario buttons
+            var scenarioButtons = document.getElementsByClassName('scenario-btn');
             for (var i = 0; i < scenarioButtons.length; i++) {
                 scenarioButtons[i].addEventListener('click', function(e) {
                     var service = e.currentTarget.getAttribute('data-service');
-                    if (service) {
-                        var friendlyName = e.currentTarget.innerText;
-                        if (confirm('Lancer le scénario "' + friendlyName + '" ?')) {
-                            callService(service);
-                        }
+                    var friendlyName = e.currentTarget.innerText;
+                    if (confirm('Lancer le scénario "' + friendlyName + '" ?')) {
+                        var domain = service.split('.')[0];
+                        var serviceName = service.split('.')[1];
+                        callService(domain, serviceName, { entity_id: service });
                     }
                 });
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            if (hassUrl === 'ws://YOUR_HA_IP_ADDRESS:8123/api/websocket' || accessToken === 'YOUR_LONG_LIVED_ACCESS_TOKEN') {
-                alert('Veuillez configurer l\'URL et le jeton d\'accès Home Assistant dans le fichier simple-ha.html');
-                return;
+        // Appel de service Home Assistant
+        function callService(domain, service, data) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // Rafraîchir après un court délai
+                        setTimeout(function() {
+                            loadStates();
+                        }, 800);
+                    } else {
+                        showError('❌ Erreur lors du contrôle de l\'équipement');
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify(data));
+        }
+
+
+        // Affichage des erreurs
+        function showError(message) {
+            var content = document.getElementById('content');
+            var errorHtml = '<div class="error">' + message + '</div>';
+            content.innerHTML = errorHtml + content.innerHTML;
+        }
+
+        // Effacement des erreurs
+        function clearErrors() {
+            var errors = document.getElementsByClassName('error');
+            for (var i = errors.length - 1; i >= 0; i--) {
+                errors[i].parentNode.removeChild(errors[i]);
             }
-            updateDateTime();
-            setInterval(updateDateTime, 60000);
+        }
 
-            initializeScenarioButtons();
-            connect();
-        });
+        // Mise à jour de l'heure de rafraîchissement
+        function updateLastRefresh() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
 
-    })();
+            if (hours < 10) hours = '0' + hours;
+            if (minutes < 10) minutes = '0' + minutes;
+            if (seconds < 10) seconds = '0' + seconds;
+
+            var timeString = hours + ':' + minutes + ':' + seconds;
+            document.getElementById('lastUpdate').innerHTML = '🔄 Mise à jour : ' + timeString;
+        }
+
+        // Gestion des événements tactiles pour iOS
+        document.addEventListener('touchstart', function() {}, { passive: true });
+
+        // Démarrage de l'application
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // Nettoyage à la fermeture
+        window.onbeforeunload = function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        };
     </script>
 </body>
 </html>
