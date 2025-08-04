@@ -3,11 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>🏠 Home Assistant Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="/local/icon.png">
     <style>
         * {
             margin: 0;
@@ -18,102 +16,119 @@
 
         body {
             font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: center / cover no-repeat url("/local/fond_tablette.webp") fixed;
-            background-color: #333; /* Fallback */
+            background: -webkit-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: white;
+            color: #333;
             padding: 8px;
             -webkit-text-size-adjust: none;
+            /* Optimisations pour iPad Kiosk - Suppression des zooms et interactions indésirables */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .header {
-            display: none; /* Remplacé par la nouvelle carte header */
-        }
-
-        .nav {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-pack: center;
-            -ms-flex-pack: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            -webkit-border-radius: 12px;
-            border-radius: 12px;
-            padding: 5px;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
+            text-align: center;
             color: white;
-            padding: 10px 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-            -webkit-border-radius: 8px;
-            border-radius: 8px;
-            -webkit-transition: background 0.3s ease;
-            -o-transition: background 0.3s ease;
-            transition: background 0.3s ease;
+            margin-bottom: 15px;
+            padding: 8px;
         }
 
-        .nav-btn.active {
-            background: rgba(255, 255, 255, 0.2);
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: 300;
+            margin-bottom: 3px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
-        .page { display: none; }
-        .page.active { display: block; }
-
-        #accueil-grid {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-wrap: wrap;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-            gap: 10px;
+        .header-info {
+            font-size: 0.85em;
+            opacity: 0.9;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* iPad Mini et tablettes en paysage - conditions plus spécifiques */
+        @media (min-width: 768px) and (orientation: landscape) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            body {
+                padding: 12px;
+            }
+        }
+
+        /* iPad standard et plus grand */
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 18px;
+            }
+            
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
             -webkit-border-radius: 12px;
             border-radius: 12px;
             padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            -webkit-box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-            width: 100%;
+            -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            break-inside: avoid;
         }
 
-        .card-title {
-            font-size: 1.1em;
-            font-weight: 700;
+        .section h3 {
+            color: #2c3e50;
             margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 1em;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        /* Layout pour tablettes en paysage */
-        @media (orientation: landscape) and (min-width: 768px) {
-            #accueil-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: auto;
-                gap: 15px;
-            }
-            #header-card { grid-column: 1 / -1; }
-            #weather-card { grid-column: 1 / 2; }
-            #climate-card { grid-column: 2 / 4; }
-            #pieces-card { grid-column: 1 / 2; }
-            #materiel-card { grid-column: 2 / 3; }
-            #scenarios-card { grid-column: 3 / 4; }
+        .section-count {
+            background: #667eea;
+            color: white;
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
         }
 
-        /* ---- Styles des cartes spécifiques ---- */
-        #header-card-content {
+        .entity {
+            background: #f8f9fa;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin: 6px 0;
             display: -webkit-box;
             display: -webkit-flex;
             display: flex;
@@ -121,57 +136,122 @@
             justify-content: space-between;
             -webkit-align-items: center;
             align-items: center;
-        }
-        #header-card-content h2 { font-size: 1.4em; margin:0; }
-        #header-card-content p { font-size: 0.9em; margin:0; opacity: 0.8; }
-        #header-card-info { font-size: 0.85em; font-weight: bold; }
-
-        .climate-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-        .climate-item { text-align: center; }
-        .climate-item .name { font-size: 0.9em; font-weight: bold; }
-        .climate-item .state { font-size: 0.8em; opacity: 0.8; }
-        .climate-item .temp { font-size: 1.2em; font-weight: bold; }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 50px;
         }
 
-        .styled-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 12px 8px;
-            font-size: 0.9em;
-            font-weight: 700;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            text-align: center;
-            height: 60px;
-            display: -webkit-box;
-            display: -webkit-flex;
+        .entity:active {
+            background: #e9ecef;
+            /* Suppression du zoom sur iPad */
+        }
+
+        .entity.updating {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .entity.updating::after {
+            content: "🔄";
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: translateY(-50%) rotate(0deg); }
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .entity-info {
+            -webkit-flex: 1;
+            flex: 1;
+            min-width: 0;
             display: flex;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: center;
+            flex-direction: column;
             justify-content: center;
-            -webkit-transition: background 0.3s ease;
-            transition: background 0.3s ease;
         }
-        .styled-btn:active { background: rgba(255, 255, 255, 0.3); }
-        .styled-btn .icon { margin-right: 8px; }
 
-        .piece-btn { background: -webkit-linear-gradient(135deg, rgba(21,101,192,0.7), rgba(25,118,210,0.6)); }
-        .materiel-btn { background: -webkit-linear-gradient(135deg, rgba(245,127,23,0.7), rgba(255,152,0,0.6)); }
-        .scenario-btn { background: -webkit-linear-gradient(135deg, rgba(156,39,176,0.7), rgba(233,30,99,0.6)); }
+        .entity-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+        }
+
+        .entity-state {
+            color: #666;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+
+        .control-btn {
+            background: -webkit-linear-gradient(45deg, #4CAF50, #45a049);
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            -webkit-border-radius: 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.8em;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            outline: none;
+            min-width: 60px;
+            min-height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .control-btn:active {
+            /* Suppression du zoom - remplacé par changement de couleur */
+            background: -webkit-linear-gradient(45deg, #45a049, #3d8b40);
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+        }
+
+        .control-btn:hover {
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .control-btn.off {
+            background: -webkit-linear-gradient(45deg, #f44336, #d32f2f);
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+        }
+
+        .control-btn.off:hover {
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cover-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .cover-controls .control-btn {
+            padding: 8px 12px;
+            font-size: 0.75em;
+            min-width: 40px;
+            min-height: 35px;
+        }
 
         .config-panel {
-            background: rgba(0,0,0,0.7);
+            background: rgba(255, 255, 255, 0.95);
             -webkit-border-radius: 12px;
             border-radius: 12px;
             padding: 20px;
@@ -180,329 +260,1156 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .config-panel h3 { color: white; }
-        .config-panel input {
-            width: 100%; padding: 12px; margin: 6px 0;
-            border: 1px solid rgba(255,255,255,0.3);
-            -webkit-border-radius: 6px; border-radius: 6px;
-            font-size: 1em; -webkit-appearance: none;
-            background: rgba(255,255,255,0.1); color: white;
+
+        .config-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
         }
+
+        .config-panel input {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: 2px solid #e9ecef;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+            font-size: 1em;
+            -webkit-appearance: none;
+            background: white;
+        }
+
+        .config-panel input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .config-panel button {
             background: -webkit-linear-gradient(45deg, #667eea, #764ba2);
-            color: white; border: none; padding: 12px 20px;
-            -webkit-border-radius: 20px; border-radius: 20px;
-            font-weight: 600; margin-top: 10px; width: 100%; font-size: 1em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            -webkit-border-radius: 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1em;
         }
 
-        .loading { text-align: center; color: white; padding: 30px; font-size: 1.1em; }
-        .error { background: #d32f2f; color: white; padding: 12px; -webkit-border-radius: 8px; border-radius: 8px; margin: 10px 0; }
-        .last-update { text-align: center; color: rgba(255,255,255,0.7); font-size: 0.8em; margin-top: 15px; padding: 10px; }
-
-        /* Fallback pour ancien iOS sans support de backdrop-filter */
-        @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-          .card {
-            background: rgba(0, 0, 0, 0.3);
-          }
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            font-size: 1.1em;
         }
 
-        .entity-row {
+        .error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #d32f2f;
+            padding: 12px;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+            font-size: 0.9em;
+        }
+
+        .last-update {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.75em;
+            margin-top: 10px;
+            padding: 8px;
+            grid-column: 1 / -1;
+        }
+
+        .climate-info {
             display: -webkit-box;
             display: -webkit-flex;
             display: flex;
             -webkit-justify-content: space-between;
             justify-content: space-between;
-            -webkit-align-items: center;
-            align-items: center;
-            padding: 8px 4px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 3px;
+            gap: 8px;
         }
-        .entity-row:last-child {
-            border-bottom: none;
-        }
-        .entity-info {
-            -webkit-flex-grow: 1;
-            flex-grow: 1;
-        }
-        .entity-name {
+
+        .climate-temp {
+            font-size: 0.7em;
+            color: #2980b9;
             font-weight: 600;
+            background: rgba(41, 128, 185, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
-        .entity-state {
-            font-size: 0.85em;
-            opacity: 0.7;
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            flex-shrink: 0;
         }
-        .entity-controls button {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.8em;
-            -webkit-border-radius: 6px;
+
+        .status-on { background: #4CAF50; }
+        .status-off { background: #f44336; }
+        .status-unavailable { background: #9e9e9e; }
+
+        .success-feedback {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            padding: 8px 12px;
             border-radius: 6px;
-            margin-left: 5px;
+            font-size: 0.8em;
+            margin-top: 5px;
+            border-left: 3px solid #4CAF50;
         }
-        .entity-controls button.active {
-            background: #667eea;
+
+        /* Navigation principale */
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Pages */
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Grilles pour les pages */
+        .rooms-grid, .material-grid, .scenarios-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) and (orientation: landscape) {
+            .rooms-grid, .material-grid, .scenarios-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .rooms-grid, .material-grid, .scenarios-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* Cartes de pièces, matériel et scénarios */
+        .room-card, .material-card, .scenario-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* Optimisations iPad Kiosk */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .room-card:hover, .material-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+
+        .room-card:active, .material-card:active {
+            /* Suppression du zoom - remplacé par changement de couleur */
+            background: rgba(245, 245, 245, 0.95);
+        }
+
+        .room-icon, .material-icon, .scenario-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .room-name, .material-name, .scenario-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .room-info, .material-info, .scenario-info {
+            font-size: 0.8em;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* Styles spécifiques pour les scénarios */
+        .scenario-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario-card.coucher {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.9), rgba(103, 58, 183, 0.8));
+            color: white;
+        }
+
+        .scenario-card.absent {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.9), rgba(233, 30, 99, 0.8));
+            color: white;
+        }
+
+        .scenario-card.fete {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.9), rgba(233, 30, 99, 0.8));
+            color: white;
+        }
+
+        .scenario-card.film {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.9), rgba(0, 188, 212, 0.8));
+            color: white;
+        }
+
+        .scenario-card.nuit {
+            background: linear-gradient(135deg, rgba(33, 33, 33, 0.9), rgba(66, 66, 66, 0.8));
+            color: white;
+        }
+
+        .scenario-card.coucher .scenario-name,
+        .scenario-card.absent .scenario-name,
+        .scenario-card.fete .scenario-name,
+        .scenario-card.film .scenario-name,
+        .scenario-card.nuit .scenario-name {
+            color: white;
+        }
+
+        .scenario-card.coucher .scenario-info,
+        .scenario-card.absent .scenario-info,
+        .scenario-card.fete .scenario-info,
+        .scenario-card.film .scenario-info,
+        .scenario-card.nuit .scenario-info {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Navigation de retour */
+        .back-nav {
+            margin: 20px 0;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            border: 2px solid #e9ecef;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* Détails des pièces */
+        .room-details, .material-details {
+            margin-top: 20px;
+        }
+
+        /* Responsive pour navigation */
+        @media (max-width: 480px) {
+            .main-nav {
+                gap: 5px;
+            }
+            
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+            
+            .room-card, .material-card {
+                min-height: 100px;
+                padding: 15px;
+            }
+            
+            .room-icon, .material-icon, .scenario-icon {
+                font-size: 2em;
+            }
+        }
+
+        /* Optimisations globales pour iPad Kiosk */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        button, .nav-btn, .control-btn, .back-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Optimisations pour les petites entités sans contrôles */
+        .entity.sensor-only {
+            min-height: 40px;
+            padding: 6px 10px;
+        }
+
+        .entity.sensor-only .entity-name {
+            font-size: 0.8em;
+        }
+
+        .entity.sensor-only .entity-state {
+            font-size: 0.7em;
+        }
+
+        /* Style pour les valeurs importantes */
+        .entity-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Adaptation pour les très petits écrans */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .control-btn {
+                padding: 8px 12px;
+                font-size: 0.75em;
+                min-width: 50px;
+                min-height: 35px;
+            }
+            
+            .entity {
+                min-height: 45px;
+                padding: 6px 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="config-panel" id="configPanel">
-        <h3>⚙️ Configuration</h3>
-        <input type="text" id="haUrl" placeholder="URL Home Assistant" autocomplete="off" />
-        <input type="password" id="haToken" placeholder="Token d'accès" autocomplete="off" />
-        <button onclick="saveConfig()">Se connecter</button>
+    <div class="header">
+        <h1>🏠 Home Assistant</h1>
+        <div class="header-info">Tableau de bord connecté</div>
+        
+        <!-- Navigation principale -->
+        <div class="main-nav" id="mainNav">
+            <button class="nav-btn active" onclick="showPage('dashboard')">🏠 Accueil</button>
+            <button class="nav-btn" onclick="showPage('pieces')">🏘️ Pièces</button>
+            <button class="nav-btn" onclick="showPage('materiel')">🔧 Matériel</button>
+            <button class="nav-btn" onclick="showPage('scenarios')">🎬 Scénarios</button>
+        </div>
     </div>
 
-    <div id="dashboard-content" style="display: none;">
-        <div class="nav">
-            <button class="nav-btn active" onclick="showPage('page-accueil')">Accueil</button>
-            <button class="nav-btn" onclick="showPage('page-pieces')">Pièces</button>
-            <button class="nav-btn" onclick="showPage('page-materiel')">Matériel</button>
+    <div class="config-panel" id="configPanel">
+        <h3>⚙️ Configuration de connexion</h3>
+        <input type="text" id="haUrl" placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" autocomplete="off" />
+        <input type="password" id="haToken" placeholder="Token d'accès long terme" autocomplete="off" />
+        <button onclick="saveConfig()">Se connecter</button>
+        <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
+            💡 Pour créer un token : Profil → Tokens d'accès long terme
         </div>
-
-        <div id="main-content">
-            <div id="page-accueil" class="page active">
-                <div id="accueil-grid">
-                    <div id="header-card" class="card"></div>
-                    <div id="weather-card" class="card"></div>
-                    <div id="climate-card" class="card"></div>
-                    <div id="pieces-card" class="card"></div>
-                    <div id="materiel-card" class="card"></div>
-                    <div id="scenarios-card" class="card"></div>
-                </div>
-            </div>
-            <div id="page-pieces" class="page">
-                <div class="dashboard-grid" id="pieces-grid"></div>
-            </div>
-            <div id="page-materiel" class="page">
-                <div class="dashboard-grid" id="materiel-grid"></div>
-            </div>
-        </div>
-        <div class="last-update" id="lastUpdate"></div>
     </div>
 
     <div class="loading" id="loading" style="display: none;">
         <div>🔄 Connexion en cours...</div>
     </div>
+    
+    <!-- Page principale - Dashboard -->
+    <div class="page-content" id="dashboardPage">
+        <div class="dashboard-grid" id="content"></div>
+        <div class="last-update" id="lastUpdate"></div>
+    </div>
+    
+    <!-- Page Pièces -->
+    <div class="page-content" id="piecesPage" style="display: none;">
+        <div class="rooms-grid" id="roomsContent"></div>
+        <div class="room-details" id="roomDetails" style="display: none;">
+            <div class="back-nav">
+                <button class="back-btn" onclick="showRoomsList()">← Retour aux pièces</button>
+            </div>
+            <div class="dashboard-grid" id="roomEntities"></div>
+        </div>
+    </div>
+    
+    <!-- Page Matériel -->
+    <div class="page-content" id="materielPage" style="display: none;">
+        <div class="material-grid" id="materialContent"></div>
+        <div class="material-details" id="materialDetails" style="display: none;">
+            <div class="back-nav">
+                <button class="back-btn" onclick="showMaterialList()">← Retour au matériel</button>
+            </div>
+            <div class="dashboard-grid" id="materialEntities"></div>
+        </div>
+    </div>
+    
+    <!-- Page Scénarios -->
+    <div class="page-content" id="scenariosPage" style="display: none;">
+        <div class="scenarios-grid" id="scenariosContent"></div>
+    </div>
 
     <script>
-        var haUrl = '', haToken = '', entities = [], refreshInterval, isLoading = false;
+        // Variables globales
+        var haUrl = '';
+        var haToken = '';
+        var entities = [];
+        var refreshInterval;
+        var isLoading = false;
+        var pendingCommands = new Set();
+        var currentPage = 'dashboard';
+        var currentRoom = null;
+        var currentMaterial = null;
 
+        // Configuration des pièces (basée sur votre YAML)
+        var roomsConfig = {
+            'adele': { name: '👧 Adèle', entities: ['climate.adele', 'cover.fenetre_adele_arriere', 'cover.fenetre_adele_ru', 'sensor.adele_temperature', 'sensor.adele_humidite', 'binary_sensor.adele_probleme'] },
+            'alex': { name: '👦 Alex', entities: ['climate.alex', 'cover.fenetre_alex_jar', 'cover.fenetre_alex_rue', 'sensor.alex_temperature', 'sensor.alex_humidite', 'binary_sensor.alex_probleme'] },
+            'bureau': { name: '💼 Bureau', entities: ['climate.bureau', 'cover.fenetre_bureau', 'sensor.bureau_temperature', 'sensor.bureau_humidite', 'binary_sensor.bureau_probleme'] },
+            'cuisine': { name: '🍳 Cuisine', entities: ['climate.cuisine', 'cover.fenetre_cuisine', 'cover.fenetre_cuisine_avant', 'sensor.cuisine_temperature', 'sensor.cuisine_humidite', 'binary_sensor.cuisine_probleme'] },
+            'entree_tv': { name: '📺 Entrée & TV', entities: ['climate.entree_tv', 'cover.fenetre_entree', 'cover.fenetre_salon_central', 'cover.fenetre_salon_dr', 'cover.fenetre_salon_gauche', 'cover.fenetre_salon_tv', 'sensor.entree_tv_temperature', 'sensor.entree_tv_humidite', 'binary_sensor.entree_tv_probleme'] },
+            'parents': { name: '🛏️ Parents', entities: ['climate.parents', 'cover.fenetre_sdb_suite', 'cover.fenetre_suite', 'sensor.parents_temperature', 'sensor.parents_humidite', 'binary_sensor.parents_probleme'] }
+        };
+
+        // Configuration du matériel (basée sur votre YAML)
+        var materialConfig = {
+            'volets': { name: '🪟 Volets', entities: ['cover.tous_les_volets', 'cover.volets_rdc_2', 'cover.volets_chambres_2', 'cover.fenetre_adele_arriere', 'cover.fenetre_adele_ru', 'cover.fenetre_alex_jar', 'cover.fenetre_alex_rue', 'cover.fenetre_bureau', 'cover.fenetre_cuisine', 'cover.fenetre_cuisine_avant', 'cover.fenetre_entree', 'cover.fenetre_salon_central', 'cover.fenetre_salon_dr', 'cover.fenetre_salon_gauche', 'cover.fenetre_salon_tv', 'cover.fenetre_sdb_suite', 'cover.fenetre_suite'] },
+            'temperature': { name: '🌡️ Température', entities: ['sensor.adele_temperature', 'sensor.alex_temperature', 'sensor.bureau_temperature', 'sensor.cuisine_temperature', 'sensor.entree_tv_temperature', 'sensor.parents_temperature', 'weather.forecast_maison'] },
+            'electromenager': { name: '🔌 Électroménager', entities: ['switch.lave_vaisselle_etat', 'sensor.lave_vaisselle_etat', 'sensor.lave_vaisselle_porte', 'switch.table_de_cuisson_etat', 'switch.table_de_cuisson_securite_enfant', 'sensor.table_de_cuisson_etat'] },
+            'exterieur': { name: '🌿 Extérieur', entities: ['binary_sensor.irrigation_unlimited_c1_m', 'binary_sensor.irrigation_unlimited_c1_z1', 'binary_sensor.irrigation_unlimited_c1_z2', 'binary_sensor.irrigation_unlimited_c1_z3', 'weather.forecast_maison'] },
+            'reseau': { name: '📶 Réseau', entities: ['device_tracker.freebox_v9_r1', 'sensor.freebox_download_speed', 'sensor.freebox_upload_speed', 'sensor.freebox_temperature_cpu_0', 'device_tracker.imx6ull14x14evk', 'device_tracker.iphone_9', 'device_tracker.samsung'] },
+            'imprimante': { name: '🖨️ Imprimante', entities: ['sensor.hp_deskjet_3700_series', 'sensor.hp_deskjet_3700_series_black_ink', 'sensor.hp_deskjet_3700_series_tri_color_ink'] }
+        };
+
+        // Configuration des scénarios (basée sur votre YAML)
+        var scenariosConfig = {
+            'coucher': { name: '😴 Coucher', icon: '🌙', service: 'script.scenario_coucher', description: 'Mode nuit avec éclairage tamisé', class: 'coucher' },
+            'absent': { name: '🏠 Absent', icon: '🚪', service: 'script.scenario_absent', description: 'Sécurisation de la maison', class: 'absent' },
+            'fete': { name: '🎉 Fête', icon: '🎊', service: 'script.scenario_fete', description: 'Ambiance festive', class: 'fete' },
+            'film': { name: '🎥 Soirée Film', icon: '🍿', service: 'script.scenario_soiree_film', description: 'Ambiance cinéma', class: 'film' },
+            'nuit': { name: '🌌 Nuit', icon: '😴', service: 'script.scenario_nuit', description: 'Extinction complète', class: 'nuit' }
+        };
+
+        // Initialisation au chargement de la page
         function initApp() {
+            console.log('Application démarrée');
+            loadStoredConfig();
+            
             if (haUrl && haToken) {
                 hideConfigPanel();
                 startAutoRefresh();
             }
         }
 
-        function showPage(pageId) {
-            var pages = document.getElementsByClassName('page');
-            for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
-            document.getElementById(pageId).classList.add('active');
-
-            var navBtns = document.getElementsByClassName('nav-btn');
-            for (var i = 0; i < navBtns.length; i++) navBtns[i].classList.remove('active');
-            
-            var activeBtn = document.querySelector('.nav-btn[onclick="showPage(\'' + pageId + '\')]');
-            if (activeBtn) activeBtn.classList.add('active');
-            
-            if (entities.length > 0) displayStates(entities);
+        // Chargement de la configuration stockée (simulation)
+        function loadStoredConfig() {
+            // Pour iOS 9.3.5, on ne peut pas utiliser localStorage de manière fiable
+            // La configuration devra être saisie à chaque fois
         }
 
+        // Sauvegarde de la configuration
         function saveConfig() {
-            haUrl = document.getElementById('haUrl').value.replace(/\s/g, '');
-            haToken = document.getElementById('haToken').value.replace(/\s/g, '');
-            if (!haUrl || !haToken) { showError('URL et Token requis.'); return; }
-            if (haUrl.slice(-1) === '/') haUrl = haUrl.slice(0, -1);
-            if (haUrl.indexOf('http') !== 0) haUrl = 'http://' + haUrl;
+            var urlInput = document.getElementById('haUrl');
+            var tokenInput = document.getElementById('haToken');
+            
+            haUrl = urlInput.value.replace(/\s/g, '');
+            haToken = tokenInput.value.replace(/\s/g, '');
+            
+            if (!haUrl || !haToken) {
+                showError('Veuillez remplir tous les champs de configuration');
+                return;
+            }
+            
+            // Nettoyer l'URL
+            if (haUrl.charAt(haUrl.length - 1) === '/') {
+                haUrl = haUrl.slice(0, -1);
+            }
+            
+            if (haUrl.indexOf('http') !== 0) {
+                haUrl = 'http://' + haUrl;
+            }
+            
+            console.log('Configuration sauvegardée:', haUrl);
             hideConfigPanel();
             startAutoRefresh();
         }
 
         function hideConfigPanel() {
             document.getElementById('configPanel').style.display = 'none';
-            document.getElementById('dashboard-content').style.display = 'block';
-            showPage('page-accueil');
         }
 
+        function showConfigPanel() {
+            document.getElementById('configPanel').style.display = 'block';
+        }
+
+        // Démarrage du rafraîchissement automatique
         function startAutoRefresh() {
             loadStates();
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(loadStates, 10000);
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            refreshInterval = setInterval(function() {
+                loadStates();
+            }, 5000); // Réduit à 5 secondes pour plus de réactivité
         }
 
+        // Navigation entre les pages
+        function showPage(page) {
+            // Masquer toutes les pages
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('piecesPage').style.display = 'none';
+            document.getElementById('materielPage').style.display = 'none';
+            document.getElementById('scenariosPage').style.display = 'none';
+            
+            // Réinitialiser les détails
+            document.getElementById('roomDetails').style.display = 'none';
+            document.getElementById('materialDetails').style.display = 'none';
+            
+            // Mettre à jour la navigation
+            var navBtns = document.querySelectorAll('.nav-btn');
+            for (var i = 0; i < navBtns.length; i++) {
+                navBtns[i].classList.remove('active');
+            }
+            
+            currentPage = page;
+            
+            // Afficher la page demandée
+            if (page === 'dashboard') {
+                document.getElementById('dashboardPage').style.display = 'block';
+                navBtns[0].classList.add('active');
+            } else if (page === 'pieces') {
+                document.getElementById('piecesPage').style.display = 'block';
+                navBtns[1].classList.add('active');
+                showRoomsList();
+            } else if (page === 'materiel') {
+                document.getElementById('materielPage').style.display = 'block';
+                navBtns[2].classList.add('active');
+                showMaterialList();
+            } else if (page === 'scenarios') {
+                document.getElementById('scenariosPage').style.display = 'block';
+                navBtns[3].classList.add('active');
+                showScenariosList();
+            }
+        }
+
+        // Affichage de la liste des pièces
+        function showRoomsList() {
+            document.getElementById('roomDetails').style.display = 'none';
+            var roomsContent = document.getElementById('roomsContent');
+            var html = '';
+            
+            for (var roomId in roomsConfig) {
+                var room = roomsConfig[roomId];
+                var availableEntities = countAvailableEntities(room.entities);
+                
+                html += '<div class="room-card" onclick="showRoomDetails(\'' + roomId + '\')">';
+                html += '<div class="room-icon">' + room.name.split(' ')[0] + '</div>';
+                html += '<div class="room-name">' + room.name.substring(2) + '</div>';
+                html += '<div class="room-info">';
+                html += '<span>' + availableEntities + ' équipements</span>';
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            roomsContent.innerHTML = html;
+        }
+
+        // Affichage des détails d'une pièce
+        function showRoomDetails(roomId) {
+            currentRoom = roomId;
+            var room = roomsConfig[roomId];
+            
+            // Filtrer les entités disponibles
+            var roomEntities = [];
+            for (var i = 0; i < entities.length; i++) {
+                if (room.entities.indexOf(entities[i].entity_id) !== -1) {
+                    roomEntities.push(entities[i]);
+                }
+            }
+            
+            // Afficher les entités de la pièce
+            var roomEntitiesDiv = document.getElementById('roomEntities');
+            var html = '<div class="section">';
+            html += '<h3>' + room.name + ' <span class="section-count">' + roomEntities.length + '</span></h3>';
+            
+            for (var i = 0; i < roomEntities.length; i++) {
+                var entity = roomEntities[i];
+                var domain = entity.entity_id.split('.')[0];
+                var controllable = (domain === 'light' || domain === 'switch' || domain === 'cover');
+                html += createEntityHtml(entity, controllable, domain);
+            }
+            
+            html += '</div>';
+            roomEntitiesDiv.innerHTML = html;
+            
+            document.getElementById('roomDetails').style.display = 'block';
+        }
+
+        // Affichage de la liste du matériel
+        function showMaterialList() {
+            document.getElementById('materialDetails').style.display = 'none';
+            var materialContent = document.getElementById('materialContent');
+            var html = '';
+            
+            for (var materialId in materialConfig) {
+                var material = materialConfig[materialId];
+                var availableEntities = countAvailableEntities(material.entities);
+                
+                html += '<div class="material-card" onclick="showMaterialDetails(\'' + materialId + '\')">';
+                html += '<div class="material-icon">' + material.name.split(' ')[0] + '</div>';
+                html += '<div class="material-name">' + material.name.substring(2) + '</div>';
+                html += '<div class="material-info">';
+                html += '<span>' + availableEntities + ' éléments</span>';
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            materialContent.innerHTML = html;
+        }
+
+        // Affichage des détails d'un type de matériel
+        function showMaterialDetails(materialId) {
+            currentMaterial = materialId;
+            var material = materialConfig[materialId];
+            
+            // Filtrer les entités disponibles
+            var materialEntities = [];
+            for (var i = 0; i < entities.length; i++) {
+                if (material.entities.indexOf(entities[i].entity_id) !== -1) {
+                    materialEntities.push(entities[i]);
+                }
+            }
+            
+            // Afficher les entités du matériel
+            var materialEntitiesDiv = document.getElementById('materialEntities');
+            var html = '<div class="section">';
+            html += '<h3>' + material.name + ' <span class="section-count">' + materialEntities.length + '</span></h3>';
+            
+            for (var i = 0; i < materialEntities.length; i++) {
+                var entity = materialEntities[i];
+                var domain = entity.entity_id.split('.')[0];
+                var controllable = (domain === 'light' || domain === 'switch' || domain === 'cover');
+                html += createEntityHtml(entity, controllable, domain);
+            }
+            
+            html += '</div>';
+            materialEntitiesDiv.innerHTML = html;
+            
+            document.getElementById('materialDetails').style.display = 'block';
+        }
+
+        // Compter les entités disponibles
+        function countAvailableEntities(entityList) {
+            var count = 0;
+            for (var i = 0; i < entities.length; i++) {
+                if (entityList.indexOf(entities[i].entity_id) !== -1) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        // Affichage de la liste des scénarios
+        function showScenariosList() {
+            var scenariosContent = document.getElementById('scenariosContent');
+            var html = '';
+            
+            for (var scenarioId in scenariosConfig) {
+                var scenario = scenariosConfig[scenarioId];
+                
+                html += '<div class="scenario-card ' + scenario.class + '" onclick="executeScenario(\'' + scenarioId + '\')">';
+                html += '<div class="scenario-icon">' + scenario.icon + '</div>';
+                html += '<div class="scenario-name">' + scenario.name + '</div>';
+                html += '<div class="scenario-info">';
+                html += '<span>' + scenario.description + '</span>';
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            scenariosContent.innerHTML = html;
+        }
+
+        // Exécution d'un scénario
+        function executeScenario(scenarioId) {
+            var scenario = scenariosConfig[scenarioId];
+            
+            // Demander confirmation
+            if (confirm('Voulez-vous lancer le scénario "' + scenario.name + '" ?\n\n' + scenario.description)) {
+                // Appeler le service Home Assistant
+                var serviceParts = scenario.service.split('.');
+                var domain = serviceParts[0];
+                var service = serviceParts[1];
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            showSuccess('✅ Scénario "' + scenario.name + '" lancé avec succès !');
+                        } else {
+                            showError('❌ Erreur lors du lancement du scénario (Code: ' + xhr.status + ')');
+                        }
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    showError('❌ Erreur réseau lors du lancement du scénario');
+                };
+                
+                try {
+                    xhr.send(JSON.stringify({}));
+                } catch (e) {
+                    showError('❌ Erreur lors de l\'envoi de la commande scénario');
+                }
+            }
+        }
+
+        // Chargement des états depuis Home Assistant
         function loadStates() {
             if (isLoading) return;
             isLoading = true;
-            document.getElementById('loading').style.display = 'block';
             
-            callApi('GET', '/states', null, function(status, responseText) {
+            var loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'block';
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', haUrl + '/api/states', true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    isLoading = false;
+                    loadingEl.style.display = 'none';
+                    
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            entities = data;
+                            
+                            // Mettre à jour la page courante
+                            if (currentPage === 'dashboard') {
+                                displayStates(data);
+                            } else if (currentPage === 'pieces' && currentRoom) {
+                                showRoomDetails(currentRoom);
+                            } else if (currentPage === 'materiel' && currentMaterial) {
+                                showMaterialDetails(currentMaterial);
+                            }
+                            
+                            updateLastRefresh();
+                            clearErrors();
+                        } catch (e) {
+                            console.error('Erreur parsing:', e);
+                            showError('Erreur de traitement des données: ' + e.message);
+                        }
+                    } else if (xhr.status === 401) {
+                        showError('🔐 Token invalide - Vérifiez votre token d\'accès');
+                        showConfigPanel();
+                    } else if (xhr.status === 0) {
+                        showError('🌐 Impossible de se connecter - Vérifiez votre URL et votre réseau');
+                    } else {
+                        showError('⚠️ Erreur de connexion (Code: ' + xhr.status + ')');
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
                 isLoading = false;
-                document.getElementById('loading').style.display = 'none';
-                if (status === 200) {
-                    try {
-                        entities = JSON.parse(responseText);
-                        displayStates(entities);
-                        updateLastRefresh();
-                    } catch (e) { showError('Erreur de parsing JSON.'); }
-                } else {
-                    showError('Erreur de connexion: ' + status);
-                }
-            });
-        }
-
-        function displayStates(states) {
-            var currentPageId = document.querySelector('.page.active').id;
-            if (currentPageId === 'page-accueil') {
-                displayAccueil(states);
-            } else if (currentPageId === 'page-pieces') {
-                displayPieces(states);
-            } else if (currentPageId === 'page-materiel') {
-                displayMateriel(states);
-            }
-        }
-
-        function displayAccueil(states) {
-            // ... (same as before)
-        }
-
-        function displayMateriel(states) {
-            var grid = document.getElementById('materiel-grid');
-            var domains = ['light', 'switch', 'cover', 'climate', 'sensor'];
-            var html = '';
-
-            domains.forEach(function(domain) {
-                var domainEntities = findEntityByDomain(states, domain);
-                if (domainEntities.length > 0) {
-                    html += '<div class="card"><h3 class="card-title">' + domain.charAt(0).toUpperCase() + domain.slice(1) + 's</h3>';
-                    domainEntities.forEach(function(entity) {
-                        html += createEntityRowHtml(entity);
-                    });
-                    html += '</div>';
-                }
-            });
-            grid.innerHTML = html;
-        }
-
-        function displayPieces(states) {
-            var grid = document.getElementById('pieces-grid');
-            var rooms = {};
+                loadingEl.style.display = 'none';
+                showError('🔌 Erreur réseau - Vérifiez votre connexion Internet');
+            };
             
-            states.forEach(function(entity) {
-                var roomName = (entity.attributes.friendly_name || '').split(' ')[0];
-                if (['Salon', 'Cuisine', 'Chambre', 'Bureau', 'Salle', 'Entrée'].indexOf(roomName) !== -1) {
-                    if (!rooms[roomName]) rooms[roomName] = [];
-                    rooms[roomName].push(entity);
-                }
-            });
-
-            var html = '';
-            for (var room in rooms) {
-                html += '<div class="card"><h3 class="card-title">' + room + '</h3>';
-                rooms[room].forEach(function(entity) {
-                    html += createEntityRowHtml(entity);
-                });
-                html += '</div>';
+            try {
+                xhr.send();
+            } catch (e) {
+                isLoading = false;
+                loadingEl.style.display = 'none';
+                showError('Erreur lors de l\'envoi de la requête');
             }
-            grid.innerHTML = html;
         }
 
-        function createEntityRowHtml(entity) {
-            var domain = entity.entity_id.split('.')[0];
-            var html = '<div class="entity-row">';
-            html += '<div class="entity-info">' +
-                        '<div class="entity-name">' + (entity.attributes.friendly_name || entity.entity_id) + '</div>' +
-                        '<div class="entity-state">' + entity.state + '</div>' +
-                    '</div>';
-            html += '<div class="entity-controls">';
-
-            if (domain === 'light' || domain === 'switch') {
-                var isOn = entity.state === 'on';
-                html += '<button class="' + (isOn ? 'active' : '') + '" onclick="toggleEntity(\'' + entity.entity_id + '\')">' + (isOn ? 'Éteindre' : 'Allumer') + '</button>';
-            } else if (domain === 'cover') {
-                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'open_cover\')">⬆</button>';
-                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'stop_cover\')">⏸</button>';
-                html += '<button onclick="controlCover(\'' + entity.entity_id + '\', \'close_cover\')">⬇</button>';
+        // Affichage des états
+        function displayStates(states) {
+            var content = document.getElementById('content');
+            var html = '';
+            
+            // Tri et organisation des entités
+            var lights = [];
+            var switches = [];
+            var climates = [];
+            var sensors = [];
+            var covers = [];
+            
+            for (var i = 0; i < states.length; i++) {
+                var entity = states[i];
+                var domain = entity.entity_id.split('.')[0];
+                
+                switch (domain) {
+                    case 'light':
+                        lights.push(entity);
+                        break;
+                    case 'switch':
+                        switches.push(entity);
+                        break;
+                    case 'climate':
+                        climates.push(entity);
+                        break;
+                    case 'cover':
+                        covers.push(entity);
+                        break;
+                    case 'sensor':
+                    case 'binary_sensor':
+                        if (entity.attributes.device_class === 'temperature' || 
+                            entity.attributes.device_class === 'humidity' ||
+                            entity.entity_id.indexOf('temperature') !== -1 ||
+                            entity.entity_id.indexOf('humidite') !== -1) {
+                            sensors.push(entity);
+                        }
+                        break;
+                }
             }
+            
+            // Affichage des sections avec répartition optimisée
+            if (climates.length > 0) {
+                html += createSection('🌡️ Climatisation', climates, true, 'climate');
+            }
+            
+            if (lights.length > 0) {
+                html += createSection('💡 Éclairages', lights.slice(0, 15), true, 'light');
+            }
+            
+            if (switches.length > 0) {
+                html += createSection('🔌 Interrupteurs', switches.slice(0, 12), true, 'switch');
+            }
+            
+            if (covers.length > 0) {
+                html += createSection('🪟 Volets', covers.slice(0, 10), true, 'cover');
+            }
+            
+            if (sensors.length > 0) {
+                html += createSection('📊 Capteurs', sensors.slice(0, 10), false, 'sensor');
+            }
+            
+            content.innerHTML = html;
+        }
 
-            html += '</div></div>';
+        // Création d'une section
+        function createSection(title, entities, controllable, type) {
+            var html = '<div class="section">';
+            html += '<h3>' + title + ' <span class="section-count">' + entities.length + '</span></h3>';
+            
+            for (var i = 0; i < entities.length; i++) {
+                html += createEntityHtml(entities[i], controllable, type);
+            }
+            
+            html += '</div>';
             return html;
         }
 
+        // Création du HTML pour une entité
+        function createEntityHtml(entity, controllable, type) {
+            var friendlyName = entity.attributes.friendly_name || entity.entity_id;
+            var state = entity.state;
+            var unit = entity.attributes.unit_of_measurement || '';
+            var entityId = entity.entity_id;
+            
+            // Statut indicator
+            var statusClass = 'status-unavailable';
+            if (state === 'on') statusClass = 'status-on';
+            else if (state === 'off') statusClass = 'status-off';
+            else if (state === 'unavailable') statusClass = 'status-unavailable';
+            
+            var updatingClass = pendingCommands.has(entityId) ? ' updating' : '';
+            var sensorClass = !controllable ? ' sensor-only' : '';
+            
+            var html = '<div class="entity' + updatingClass + sensorClass + '" data-entity-id="' + entityId + '">';
+            html += '<div class="entity-info">';
+            html += '<div class="entity-name">';
+            html += '<span class="status-indicator ' + statusClass + '"></span>';
+            html += friendlyName + '</div>';
+            
+            if (type === 'climate') {
+                var currentTemp = entity.attributes.current_temperature;
+                var targetTemp = entity.attributes.temperature;
+                html += '<div class="entity-state">État: ' + translateState(state) + '</div>';
+                if (currentTemp && targetTemp) {
+                    html += '<div class="climate-info">';
+                    html += '<span class="climate-temp">Actuel: ' + currentTemp + '°C</span>';
+                    html += '<span class="climate-temp">Cible: ' + targetTemp + '°C</span>';
+                    html += '</div>';
+                }
+            } else if (type === 'sensor' && unit) {
+                // Pour les capteurs, mettre en valeur la mesure
+                html += '<div class="entity-state">';
+                html += '<span class="entity-value">' + state + ' ' + unit + '</span>';
+                html += '</div>';
+            } else {
+                html += '<div class="entity-state">' + translateState(state) + ' ' + unit + '</div>';
+            }
+            
+            html += '</div>';
+            
+            // Boutons de contrôle
+            if (controllable) {
+                if (type === 'cover') {
+                    html += '<div class="cover-controls">';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'open_cover\')">⬆</button>';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'stop_cover\')">⏸</button>';
+                    html += '<button class="control-btn" onclick="controlCover(\'' + entityId + '\', \'close_cover\')">⬇</button>';
+                    html += '</div>';
+                } else if (state === 'on' || state === 'off') {
+                    var buttonClass = state === 'on' ? 'control-btn' : 'control-btn off';
+                    var buttonText = state === 'on' ? 'OFF' : 'ON';
+                    var disabled = pendingCommands.has(entityId) ? ' disabled' : '';
+                    html += '<button class="' + buttonClass + '"' + disabled + ' onclick="toggleEntity(\'' + entityId + '\')">' + buttonText + '</button>';
+                }
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Traduction des états
+        function translateState(state) {
+            var translations = {
+                'on': 'Allumé',
+                'off': 'Éteint',
+                'unavailable': 'Indisponible',
+                'unknown': 'Inconnu',
+                'open': 'Ouvert',
+                'closed': 'Fermé',
+                'opening': 'Ouverture...',
+                'closing': 'Fermeture...',
+                'heat': 'Chauffage',
+                'cool': 'Climatisation',
+                'auto': 'Auto',
+                'idle': 'Inactif'
+            };
+            return translations[state] || state;
+        }
+
+        // Contrôle des entités avec feedback amélioré
         function toggleEntity(entityId) {
-            var entity = findEntity(entities, entityId);
+            if (pendingCommands.has(entityId)) return;
+            
+            var entity = findEntity(entityId);
             if (!entity) return;
+            
             var service = entity.state === 'on' ? 'turn_off' : 'turn_on';
             var domain = entityId.split('.')[0];
-            callService(domain, service, { entity_id: entityId });
+            
+            // Marquer comme en cours de traitement
+            pendingCommands.add(entityId);
+            updateEntityUI(entityId, true);
+            
+            callService(domain, service, { entity_id: entityId }, entityId);
         }
 
-        function controlCover(entityId, service) {
-            callService('cover', service, { entity_id: entityId });
+        // Contrôle des volets amélioré
+        function controlCover(entityId, action) {
+            if (pendingCommands.has(entityId)) return;
+            
+            pendingCommands.add(entityId);
+            updateEntityUI(entityId, true);
+            
+            callService('cover', action, { entity_id: entityId }, entityId);
         }
 
-        function createButton(name, icon, btnClass, action) {
-            return '<button class="styled-btn ' + btnClass + '" onclick="' + action + '">' +
-                   '<span class="icon"></span>' + name + '</button>';
+        // Mise à jour de l'UI pour une entité
+        function updateEntityUI(entityId, isUpdating) {
+            var entityEl = document.querySelector('[data-entity-id="' + entityId + '"]');
+            if (entityEl) {
+                if (isUpdating) {
+                    entityEl.classList.add('updating');
+                    var btn = entityEl.querySelector('.control-btn');
+                    if (btn) btn.disabled = true;
+                } else {
+                    entityEl.classList.remove('updating');
+                    var btn = entityEl.querySelector('.control-btn');
+                    if (btn) btn.disabled = false;
+                }
+            }
         }
 
-        function callApi(method, path, body, callback) {
+        // Appel de service Home Assistant amélioré
+        function callService(domain, service, data, entityId) {
             var xhr = new XMLHttpRequest();
-            xhr.open(method, haUrl + '/api' + path, true);
+            xhr.open('POST', haUrl + '/api/services/' + domain + '/' + service, true);
             xhr.setRequestHeader('Authorization', 'Bearer ' + haToken);
-            if (body) xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-                    callback(xhr.status, xhr.responseText);
+                    // Supprimer de la liste des commandes en cours
+                    pendingCommands.delete(entityId);
+                    updateEntityUI(entityId, false);
+                    
+                    if (xhr.status === 200) {
+                        // Feedback visuel de succès
+                        showSuccess('✅ Commande exécutée avec succès');
+                        // Rafraîchir après un court délai
+                        setTimeout(function() {
+                            loadStates();
+                        }, 1000);
+                    } else {
+                        showError('❌ Erreur lors du contrôle de l\'équipement (Code: ' + xhr.status + ')');
+                        // Rafraîchir quand même pour récupérer l'état réel
+                        setTimeout(function() {
+                            loadStates();
+                        }, 1000);
+                    }
                 }
             };
-            xhr.onerror = function() { callback(0, null); };
-            xhr.send(body ? JSON.stringify(body) : null);
+            
+            xhr.onerror = function() {
+                pendingCommands.delete(entityId);
+                updateEntityUI(entityId, false);
+                showError('❌ Erreur réseau lors du contrôle');
+            };
+            
+            try {
+                xhr.send(JSON.stringify(data));
+            } catch (e) {
+                pendingCommands.delete(entityId);
+                updateEntityUI(entityId, false);
+                showError('❌ Erreur lors de l\'envoi de la commande');
+            }
         }
 
-        function callService(domain, service, data) {
-            callApi('POST', '/services/' + domain + '/' + service, data, function(status, response) {
-                if (status !== 200) showError('Erreur service ' + service);
-                setTimeout(loadStates, 500); // Fast refresh after action
-            });
-        }
-
-        function callScript(scriptId) {
-            callService('script', scriptId, {});
-        }
-
-        function findEntity(states, entityId) {
-            for (var i=0; i<states.length; i++) {
-                if (states[i].entity_id === entityId) return states[i];
+        // Recherche d'une entité
+        function findEntity(entityId) {
+            for (var i = 0; i < entities.length; i++) {
+                if (entities[i].entity_id === entityId) {
+                    return entities[i];
+                }
             }
             return null;
         }
 
-        function findEntityByDomain(states, domain) {
-            var results = [];
-            for (var i=0; i<states.length; i++) {
-                if (states[i].entity_id.startsWith(domain + '.')) {
-                    results.push(states[i]);
-                }
-            }
-            return results;
-        }
-
+        // Affichage des erreurs
         function showError(message) {
-            var errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.innerText = message;
-            document.body.appendChild(errorDiv);
-            setTimeout(function() { errorDiv.remove(); }, 5000);
+            var content = document.getElementById('content');
+            var errorHtml = '<div class="error">' + message + '</div>';
+            if (content.innerHTML) {
+                content.innerHTML = errorHtml + content.innerHTML;
+            } else {
+                content.innerHTML = errorHtml;
+            }
+            
+            // Auto-suppression après 5 secondes
+            setTimeout(clearErrors, 5000);
         }
 
+        // Affichage des messages de succès
+        function showSuccess(message) {
+            var content = document.getElementById('content');
+            var successHtml = '<div class="success-feedback">' + message + '</div>';
+            if (content.innerHTML) {
+                content.innerHTML = successHtml + content.innerHTML;
+            }
+            
+            // Auto-suppression après 3 secondes
+            setTimeout(function() {
+                var success = document.querySelector('.success-feedback');
+                if (success) {
+                    success.remove();
+                }
+            }, 3000);
+        }
+
+        // Effacement des erreurs
+        function clearErrors() {
+            var errors = document.getElementsByClassName('error');
+            for (var i = errors.length - 1; i >= 0; i--) {
+                errors[i].parentNode.removeChild(errors[i]);
+            }
+        }
+
+        // Mise à jour de l'heure de rafraîchissement
         function updateLastRefresh() {
-            var timeString = new Date().toLocaleTimeString('fr-FR');
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+            
+            if (hours < 10) hours = '0' + hours;
+            if (minutes < 10) minutes = '0' + minutes;
+            if (seconds < 10) seconds = '0' + seconds;
+            
+            var timeString = hours + ':' + minutes + ':' + seconds;
             document.getElementById('lastUpdate').innerHTML = '🔄 Mise à jour : ' + timeString;
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Gestion des événements tactiles pour iOS - Optimisé pour iPad Kiosk
+        document.addEventListener('touchstart', function() {}, { passive: true });
+        
+        // Prévention du zoom par pincement sur iPad
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('gesturechange', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('gestureend', function(e) {
+            e.preventDefault();
+        });
+
+        // Démarrage de l'application
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // Nettoyage à la fermeture
+        window.onbeforeunload = function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        };
     </script>
 </body>
 </html>
