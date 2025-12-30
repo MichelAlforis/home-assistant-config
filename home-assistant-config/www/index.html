@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🏠 Home Assistant Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- CSS modulaire - Ordre d'importation important -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/enhancements.css">
+    <link rel="stylesheet" href="css/advanced-controls.css">
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <meta name="apple-mobile-web-app-title" content="HA Dashboard">
+    
+    <!-- Favicons et icônes personnalisés -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="icon" type="image/png" href="/icons/icon.png">
+</head>
+<body>
+    <!-- Panel de debug -->
+    <div class="debug-panel" id="debugPanel">
+        <strong>DEBUG:</strong> <span id="debugText">Initialisation...</span>
+    </div>
+
+    <!-- En-tête -->
+    <div class="header">
+        <h1>🏠 Home Assistant</h1>
+        <div class="header-info">Tableau de bord connecté</div>
+        
+        <!-- Indicateur de connexion -->
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Non connecté</span>
+        </div>
+        
+        <!-- Filtres de navigation -->
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" onclick="switchToFilter('all', this)">Tout</button>
+            <button class="filter-tab" onclick="switchToFilter('pieces', this)">Pièces</button>
+            <button class="filter-tab" onclick="switchToFilter('materiel', this)">Matériel</button>
+            <button class="filter-tab" onclick="switchToFilter('scenarios', this)">Scénarios</button>
+        </div>
+    </div>
+
+    <!-- Panel de configuration -->
+    <div class="config-panel" id="configPanel">
+        <h3>⚙️ Configuration de connexion</h3>
+        <div class="config-form">
+            <input type="text" 
+                   id="haUrl" 
+                   name="url" 
+                   placeholder="URL Home Assistant (ex: http://192.168.1.100:8123)" 
+                   autocomplete="url" />
+            <input type="password" 
+                   id="haToken" 
+                   name="token" 
+                   placeholder="Token d'accès long terme" 
+                   autocomplete="off" />
+            <div class="config-buttons">
+                <button class="btn-primary" onclick="saveConfig()">Se connecter</button>
+                <button class="btn-secondary" onclick="testConnection()">🔧 Test Connexion</button>
+            </div>
+        </div>
+        <div class="config-help">
+            💡 Pour créer un token : Profil → Tokens d'accès long terme
+        </div>
+        <div class="config-quick-setup" id="configQuickSetup" style="display: none;">
+            <h4>⚡ Configuration rapide</h4>
+            <button onclick="loadDemoConfig()">Mode Démo</button>
+            <button onclick="loadLocalConfig()">Configuration Locale</button>
+        </div>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div class="loading" id="loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">🔄 Connexion en cours...</div>
+        <div class="loading-details" id="loadingDetails">Initialisation des modules...</div>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div class="page-content" id="dashboardPage">
+        <div class="dashboard-container">
+            <!-- Vue principale - Toutes les entités -->
+            <div class="dashboard-grid" id="allContent">
+                <div class="welcome-card" id="welcomeCard">
+                    <h2>🏠 Bienvenue sur votre Dashboard</h2>
+                    <p>Configurez votre connexion Home Assistant pour commencer.</p>
+                </div>
+            </div>
+            
+            <!-- Vue Pièces -->
+            <div class="rooms-grid" id="piecesContent" style="display: none;"></div>
+            <div id="pieceDetails" style="display: none;">
+                <div class="back-nav">
+                    <button class="back-btn" onclick="showPiecesList()">← Retour aux pièces</button>
+                    <h2 id="pieceDetailsTitle">Détails de la pièce</h2>
+                </div>
+                <div class="dashboard-container">
+                    <div class="dashboard-grid" id="pieceEntities"></div>
+                </div>
+            </div>
+            
+            <!-- Vue Matériel -->
+            <div class="material-grid" id="materielContent" style="display: none;"></div>
+            <div id="materielDetails" style="display: none;">
+                <div class="back-nav">
+                    <button class="back-btn" onclick="showMaterielList()">← Retour au matériel</button>
+                    <h2 id="materielDetailsTitle">Détails du matériel</h2>
+                </div>
+                <div class="dashboard-container">
+                    <div class="dashboard-grid" id="materielEntities"></div>
+                </div>
+            </div>
+            
+            <!-- Vue Scénarios -->
+            <div class="scenarios-grid" id="scenariosContent" style="display: none;">
+                <div class="scenarios-placeholder">
+                    <h3>🎬 Scénarios</h3>
+                    <p>Les scénarios Home Assistant apparaîtront ici une fois connecté.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de statut -->
+    <div class="status-bar" id="statusBar">
+        <span class="status-update">🔄 Dernière mise à jour : --:--:--</span>
+        <span class="status-entities" id="statusEntities">Entités : 0</span>
+        <span class="status-version">v2.0</span>
+    </div>
+
+    <!-- Container pour les messages (géré par le module messages.js) -->
+    <div id="ha-messages-container"></div>
+
+    <!-- Scripts modulaires - ORDRE CRITIQUE -->
+    <!-- 1. Configuration et utilitaires de base -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/utils.js"></script>
+    
+    <!-- 2. Services -->
+    <script src="js/services/ha-service.js"></script>
+    
+    <!-- 3. Interface utilisateur -->
+    <script src="js/ui/messages.js"></script>
+    
+    <!-- 4. Modules fonctionnels -->
+    <script src="js/modules/climate-control.js"></script>
+    <script src="js/modules/cover-control.js"></script>
+    
+    <!-- 5. Orchestrateur principal -->
+    <script src="js/dashboard.js"></script>
+    
+    <!-- 6. Compatibilité avec l'ancien système (optionnel) -->
+    <script>
+        // Adapter l'ancien système avec la nouvelle architecture
+        var legacyAdapter = {
+            // Fonctions de compatibilité avec votre ancien code
+            switchToFilter: function(filterType, buttonElement) {
+                // Logique de filtrage adaptée
+                var allTabs = document.querySelectorAll('.filter-tab');
+                for (var i = 0; i < allTabs.length; i++) {
+                    allTabs[i].classList.remove('active');
+                }
+                buttonElement.classList.add('active');
+                
+                // Masquer tous les contenus
+                var contents = ['allContent', 'piecesContent', 'materielContent', 'scenariosContent'];
+                for (var j = 0; j < contents.length; j++) {
+                    var element = document.getElementById(contents[j]);
+                    if (element) {
+                        element.style.display = 'none';
+                    }
+                }
+                
+                // Afficher le contenu sélectionné
+                var targetContent = {
+                    'all': 'allContent',
+                    'pieces': 'piecesContent',
+                    'materiel': 'materielContent',
+                    'scenarios': 'scenariosContent'
+                };
+                
+                var target = document.getElementById(targetContent[filterType]);
+                if (target) {
+                    target.style.display = 'block';
+                }
+                
+                HAUtils.debugLog('Switched to filter: ' + filterType);
+            },
+            
+            saveConfig: function() {
+                var url = document.getElementById('haUrl').value;
+                var token = document.getElementById('haToken').value;
+                
+                if (!url || !token) {
+                    if (window.HAMessages) {
+                        HAMessages.showError('⚠️ URL et Token requis');
+                    } else {
+                        alert('URL et Token requis');
+                    }
+                    return;
+                }
+                
+                // Sauvegarder dans localStorage
+                if (HAUtils && HAUtils.hasLocalStorage()) {
+                    try {
+                        localStorage.setItem('ha-url', url);
+                        localStorage.setItem('ha-token', token);
+                    } catch (e) {
+                        HAUtils.debugLog('Erreur sauvegarde config: ' + e.message);
+                    }
+                }
+                
+                // Configurer le service
+                if (window.HAService) {
+                    HAService.configure(url, token);
+                    
+                    // Tester la connexion
+                    document.getElementById('loading').style.display = 'block';
+                    document.getElementById('configPanel').style.display = 'none';
+                    
+                    HAService.checkConnection(function(success) {
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        if (success) {
+                            if (window.HAMessages) {
+                                HAMessages.showSuccess('✅ Connexion établie !');
+                            }
+                            legacyAdapter.updateConnectionStatus(true);
+                            legacyAdapter.loadInitialData();
+                        } else {
+                            if (window.HAMessages) {
+                                HAMessages.showError('❌ Erreur de connexion');
+                            }
+                            document.getElementById('configPanel').style.display = 'block';
+                        }
+                    });
+                }
+            },
+            
+            testConnection: function() {
+                var url = document.getElementById('haUrl').value;
+                var token = document.getElementById('haToken').value;
+                
+                if (!url) {
+                    if (window.HAMessages) {
+                        HAMessages.showWarning('⚠️ URL requise pour le test');
+                    }
+                    return;
+                }
+                
+                // Test simple de l'URL
+                if (window.HAService) {
+                    HAService.configure(url, token);
+                    HAService.checkConnection(function(success) {
+                        if (success) {
+                            if (window.HAMessages) {
+                                HAMessages.showSuccess('✅ Connexion OK !');
+                            }
+                        } else {
+                            if (window.HAMessages) {
+                                HAMessages.showError('❌ Connexion échouée');
+                            }
+                        }
+                    });
+                }
+            },
+            
+            loadDemoConfig: function() {
+                document.getElementById('haUrl').value = 'http://demo.home-assistant.io:8123';
+                document.getElementById('haToken').value = 'demo-token-for-testing';
+                if (window.HAMessages) {
+                    HAMessages.showInfo('🎭 Configuration de démo chargée');
+                }
+            },
+            
+            loadLocalConfig: function() {
+                document.getElementById('haUrl').value = 'http://192.168.1.100:8123';
+                if (window.HAMessages) {
+                    HAMessages.showInfo('🏠 Configuration locale suggérée');
+                }
+                document.getElementById('haToken').focus();
+            },
+            
+            updateConnectionStatus: function(connected) {
+                var statusDot = document.getElementById('statusDot');
+                var statusText = document.getElementById('statusText');
+                
+                if (statusDot && statusText) {
+                    if (connected) {
+                        statusDot.className = 'status-dot connected';
+                        statusText.textContent = 'Connecté';
+                    } else {
+                        statusDot.className = 'status-dot disconnected';
+                        statusText.textContent = 'Déconnecté';
+                    }
+                }
+            },
+            
+            loadInitialData: function() {
+                if (window.Dashboard && Dashboard.state) {
+                    // Masquer la carte de bienvenue
+                    var welcomeCard = document.getElementById('welcomeCard');
+                    if (welcomeCard) {
+                        welcomeCard.style.display = 'none';
+                    }
+                    
+                    // Charger les données via le Dashboard
+                    Dashboard._loadEntities();
+                }
+            },
+            
+            showPiecesList: function() {
+                document.getElementById('pieceDetails').style.display = 'none';
+                document.getElementById('piecesContent').style.display = 'block';
+            },
+            
+            showMaterielList: function() {
+                document.getElementById('materielDetails').style.display = 'none';
+                document.getElementById('materielContent').style.display = 'block';
+            }
+        };
+        
+        // Exposer les fonctions globalement pour la compatibilité
+        window.switchToFilter = legacyAdapter.switchToFilter;
+        window.saveConfig = legacyAdapter.saveConfig;
+        window.testConnection = legacyAdapter.testConnection;
+        window.loadDemoConfig = legacyAdapter.loadDemoConfig;
+        window.loadLocalConfig = legacyAdapter.loadLocalConfig;
+        window.showPiecesList = legacyAdapter.showPiecesList;
+        window.showMaterielList = legacyAdapter.showMaterielList;
+    </script>
+    
+    <!-- Initialisation -->
+    <script>
+        // Variables globales pour la compatibilité
+        window.appInitialized = false;
+        
+        // Fonction d'initialisation principale
+        function initApp() {
+            if (window.appInitialized) return;
+            
+            HAUtils.debugLog('=== INITIALISATION DASHBOARD ===');
+            
+            // Vérifier la compatibilité
+            if (!HAUtils.isIOSCompatible()) {
+                alert('Cette version d\'iOS pourrait ne pas être entièrement supportée.');
+            }
+            
+            // Charger la configuration sauvegardée
+            loadSavedConfig();
+            
+            // Afficher les boutons de configuration rapide sur iPad
+            if (HAUtils.getDeviceType() === 'tablet') {
+                var quickSetup = document.getElementById('configQuickSetup');
+                if (quickSetup) {
+                    quickSetup.style.display = 'block';
+                }
+            }
+            
+            // Initialiser le debug
+            updateDebugText('Dashboard initialisé');
+            
+            // Marquer comme initialisé
+            window.appInitialized = true;
+            
+            HAUtils.debugLog('=== INITIALISATION TERMINÉE ===');
+        }
+        
+        function loadSavedConfig() {
+            if (HAUtils.hasLocalStorage()) {
+                try {
+                    var savedUrl = localStorage.getItem('ha-url');
+                    var savedToken = localStorage.getItem('ha-token');
+                    
+                    if (savedUrl && savedToken) {
+                        document.getElementById('haUrl').value = savedUrl;
+                        document.getElementById('haToken').value = savedToken;
+                        
+                        // Auto-connexion
+                        setTimeout(function() {
+                            legacyAdapter.saveConfig();
+                        }, 1000);
+                        
+                        HAUtils.debugLog('Configuration chargée depuis localStorage');
+                    } else {
+                        // Afficher le panel de configuration si pas de config
+                        document.getElementById('configPanel').style.display = 'block';
+                    }
+                } catch (e) {
+                    HAUtils.debugLog('Erreur chargement config: ' + e.message);
+                    document.getElementById('configPanel').style.display = 'block';
+                }
+            } else {
+                document.getElementById('configPanel').style.display = 'block';
+            }
+        }
+        
+        function updateDebugText(text) {
+            var debugElement = document.getElementById('debugText');
+            if (debugElement) {
+                debugElement.textContent = text + ' - ' + new Date().toLocaleTimeString();
+            }
+        }
+        
+        // Service Worker pour PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        HAUtils.debugLog('Service Worker enregistré: ' + registration.scope);
+                    })
+                    .catch(function(error) {
+                        HAUtils.debugLog('Erreur Service Worker: ' + error);
+                    });
+            });
+        }
+        
+        // Démarrage de l'application
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            // Document déjà chargé
+            setTimeout(initApp, 100);
+        }
+        
+        // Gestion des erreurs globales
+        window.addEventListener('error', function(e) {
+            updateDebugText('Erreur: ' + e.message);
+            if (window.HAMessages) {
+                HAMessages.showError('Erreur: ' + e.message);
+            }
+        });
+        
+        // Mise à jour périodique du statut
+        setInterval(function() {
+            if (window.Dashboard && Dashboard.state && Dashboard.state.lastUpdateTime) {
+                var lastUpdate = new Date(Dashboard.state.lastUpdateTime);
+                var statusBar = document.getElementById('statusBar');
+                if (statusBar) {
+                    var timeStr = lastUpdate.toLocaleTimeString();
+                    var entitiesCount = Object.keys(Dashboard.state.entities || {}).length;
+                    
+                    statusBar.innerHTML = 
+                        '<span class="status-update">🔄 Dernière MAJ : ' + timeStr + '</span>' +
+                        '<span class="status-entities">Entités : ' + entitiesCount + '</span>' +
+                        '<span class="status-version">v2.0</span>';
+                }
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
